@@ -33,3 +33,27 @@ Sprint 1
 ⬜ EDA
 
 ⬜ Feature Engineering
+
+## Sprint 2 - Exploratory Data Analysis ✅
+
+Completed:
+
+- Dataset Overview
+- Missing Value Analysis
+- Summary Statistics
+- Closing Price Trend
+- Adjusted Closing Price Trend
+- Trading Volume Analysis
+- Daily Return Analysis
+- Cumulative Return Analysis
+- Rolling Volatility
+- Correlation Heatmap
+- Return Distribution
+- Daily Return Boxplot
+- Risk vs Return Analysis
+
+Status:
+Completed Successfully
+
+Output:
+Professional EDA notebook and visualization reports stored in `ml/reports/figures/`.
