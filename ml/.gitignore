@@ -1,13 +1,39 @@
+# ==========================
+# Python
+# ==========================
+venv/
+.venv/
 __pycache__/
 *.py[cod]
 *.pkl
 *.model
-*.ipynb_checkpoints/
-.env
-.venv/
 
-
-
-__pycache__/
-*.pyc
+# ==========================
+# Jupyter
+# ==========================
 .ipynb_checkpoints/
+
+# ==========================
+# Environment
+# ==========================
+.env
+
+# ==========================
+# Generated ML datasets
+# (can always be regenerated)
+# ==========================
+ml/investor/data/interim/
+ml/investor/data/processed/
+
+ml/stock/data/interim/
+ml/stock/data/processed/
+
+# ==========================
+# Trained Models
+# ==========================
+ml/investor/models/
+ml/stock/models/
+
+# Generated reports
+ml/stock/reports/figures/
+ml/stock/reports/*.csv

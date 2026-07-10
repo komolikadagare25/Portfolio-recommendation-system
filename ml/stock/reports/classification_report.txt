@@ -1,0 +1,22 @@
+Risk Classifier -- Evaluation Report
+==================================================
+Accuracy:  0.9399
+Precision (macro): 0.9520
+Recall (macro):    0.9307
+F1 Score (macro):  0.9398
+
+5-Fold Cross-Validation Accuracy Scores: [0.9453, 0.9453, 0.9527, 0.939, 0.9458]
+Cross-Validation Mean Accuracy: 0.9456
+Cross-Validation Std Accuracy:  0.0043
+
+Classification Report
+--------------------------------------------------
+              precision    recall  f1-score   support
+
+   High Risk       0.97      0.95      0.96       476
+    Low Risk       0.91      0.98      0.95      1189
+ Medium Risk       0.97      0.86      0.91       713
+
+    accuracy                           0.94      2378
+   macro avg       0.95      0.93      0.94      2378
+weighted avg       0.94      0.94      0.94      2378
