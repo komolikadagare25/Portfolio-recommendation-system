@@ -20,7 +20,6 @@ __pycache__/
 
 # ==========================
 # Generated ML datasets
-# (can always be regenerated)
 # ==========================
 ml/investor/data/interim/
 ml/investor/data/processed/
@@ -34,6 +33,11 @@ ml/stock/data/processed/
 ml/investor/models/
 ml/stock/models/
 
-# Generated reports
+# ==========================
+# Generated Figures
+# ==========================
+ml/investor/reports/figures/
 ml/stock/reports/figures/
+
+# Generated CSV reports
 ml/stock/reports/*.csv

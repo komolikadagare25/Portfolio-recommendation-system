@@ -1,0 +1,9 @@
+{
+  "best_params": {
+    "max_depth": 10,
+    "min_samples_leaf": 1,
+    "min_samples_split": 2,
+    "n_estimators": 100
+  },
+  "cv_mean_accuracy": 1.0
+}
