@@ -5,13 +5,6 @@ venv/
 .venv/
 __pycache__/
 *.py[cod]
-*.pkl
-*.model
-
-# ==========================
-# Jupyter
-# ==========================
-.ipynb_checkpoints/
 
 # ==========================
 # Environment
@@ -19,7 +12,19 @@ __pycache__/
 .env
 
 # ==========================
-# Generated ML datasets
+# Jupyter
+# ==========================
+.ipynb_checkpoints/
+
+# ==========================
+# Archives
+# ==========================
+*.zip
+*.rar
+*.7z
+
+# ==========================
+# Generated ML Datasets
 # ==========================
 ml/investor/data/interim/
 ml/investor/data/processed/
@@ -28,16 +33,24 @@ ml/stock/data/interim/
 ml/stock/data/processed/
 
 # ==========================
-# Trained Models
+# Generated Reports
 # ==========================
-ml/investor/models/
-ml/stock/models/
+ml/investor/reports/
+ml/stock/reports/
 
 # ==========================
-# Generated Figures
+# Explainability Outputs
 # ==========================
-ml/investor/reports/figures/
-ml/stock/reports/figures/
+ml/explainability/figures/
+ml/explainability/reports/
 
-# Generated CSV reports
-ml/stock/reports/*.csv
+# ==========================
+# VS Code
+# ==========================
+.vscode/
+
+# ==========================
+# OS Files
+# ==========================
+.DS_Store
+Thumbs.db
