@@ -1,0 +1,26 @@
+Investor Risk Classifier -- Standalone Evaluation Report
+=======================================================
+Train accuracy:       0.8004
+Test accuracy:        0.7724
+Train-test gap:       0.0280
+Overfitting detected: False
+
+Accuracy:             0.7724
+Precision (macro):    0.7761
+Recall (macro):       0.7724
+F1 Score (macro):     0.7728
+ROC-AUC (macro, OVR): 0.9118
+Cohen's Kappa:        0.6586
+Matthews Corr. Coef.: 0.6597
+
+Classification Report
+-------------------------------------------------------
+              precision    recall  f1-score   support
+
+  Aggressive       0.89      0.80      0.84       692
+Conservative       0.78      0.86      0.82       693
+    Moderate       0.66      0.66      0.66       693
+
+    accuracy                           0.77      2078
+   macro avg       0.78      0.77      0.77      2078
+weighted avg       0.78      0.77      0.77      2078

@@ -1,0 +1,25 @@
+{
+  "algorithm": "Random Forest Classifier",
+  "best_hyperparameters": {
+    "max_depth": 10,
+    "min_samples_leaf": 1,
+    "min_samples_split": 20,
+    "n_estimators": 100
+  },
+  "cv_mean_accuracy": 0.7820962073239828,
+  "oob_accuracy": 0.780652147755986,
+  "train_accuracy": 0.8003850318854531,
+  "test_accuracy": 0.7723772858517806,
+  "train_test_gap": 0.02800774603367251,
+  "overfitting_detected": false,
+  "accuracy": 0.7723772858517806,
+  "precision_macro": 0.7760893199705122,
+  "recall_macro": 0.7723901553381322,
+  "f1_macro": 0.7727930853758136,
+  "roc_auc_macro_ovr": 0.9117699613719105,
+  "class_names": [
+    "Aggressive",
+    "Conservative",
+    "Moderate"
+  ]
+}

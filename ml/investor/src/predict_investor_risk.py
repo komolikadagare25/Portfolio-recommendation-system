@@ -514,7 +514,52 @@ def align_feature_order(df: pd.DataFrame, model: RandomForestClassifier) -> pd.D
     expected_order = list(getattr(model, "feature_names_in_", FEATURE_COLUMNS))
     return df[expected_order]
 
+def preprocess_investor_input(
+    user_input: Union[dict, pd.DataFrame],
+    model: RandomForestClassifier,
+    ordinal_encoder: OrdinalEncoder,
+) -> pd.DataFrame:
+    """
+    Convert raw investor questionnaire input into the fully preprocessed
+    feature matrix expected by the trained model.
 
+    This function centralizes the preprocessing pipeline so it can be reused
+    by both prediction and explainability modules (SHAP/LIME).
+
+    Parameters
+    ----------
+    user_input : dict | pd.DataFrame
+        Raw investor questionnaire responses.
+
+    model : RandomForestClassifier
+        Trained classifier.
+
+    ordinal_encoder : OrdinalEncoder
+        Fitted ordinal encoder.
+
+    Returns
+    -------
+    pd.DataFrame
+        Fully preprocessed feature matrix ready for inference.
+    """
+
+    raw_df = convert_input_to_dataframe(user_input)
+
+    validated_df = validate_prediction_input(raw_df)
+
+    engineered_df = engineer_features(validated_df)
+
+    encoded_df = encode_categorical_features(
+        engineered_df,
+        ordinal_encoder
+    )
+
+    aligned_df = align_feature_order(
+        encoded_df,
+        model
+    )
+
+    return aligned_df
 # ----------------------------------------------------------------------------
 # 10. Prediction
 # ----------------------------------------------------------------------------
@@ -609,12 +654,11 @@ def predict_investor_risk(user_input: Union[dict, pd.DataFrame]) -> dict:
     ordinal_encoder = load_ordinal_encoder()
     label_encoder = load_label_encoder()
 
-    raw_df = convert_input_to_dataframe(user_input)
-    validated_df = validate_prediction_input(raw_df)
-
-    engineered_df = engineer_features(validated_df)
-    encoded_df = encode_categorical_features(engineered_df, ordinal_encoder)
-    aligned_df = align_feature_order(encoded_df, model)
+    aligned_df = preprocess_investor_input(
+    user_input=user_input,
+    model=model,
+    ordinal_encoder=ordinal_encoder,
+)
 
     predicted_class_index, probabilities = predict_risk_class(model, aligned_df)
 

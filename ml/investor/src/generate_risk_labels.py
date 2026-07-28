@@ -190,6 +190,33 @@ LOWER_QUANTILE: Final[float] = 0.33
 #: `LOWER_QUANTILE`.
 UPPER_QUANTILE: Final[float] = 0.66
 
+# --- Realistic behavioural variation ---------------------------------------
+# ML AUDIT FINDING (see Machine Learning Audit Report in the Streamlit app):
+# investor_risk_score is a fully deterministic function of the same raw
+# survey columns the classifier is trained on, so two investors who answer
+# identically always get an identical label -- a Random Forest can then
+# reconstruct that rule almost perfectly, which is why the classifier was
+# reporting ~100% accuracy. This is NOT classic data/target leakage (the
+# score columns are correctly excluded from the feature matrix -- see
+# LEAKAGE_COLUMNS in train_investor_classifier.py); the label itself simply
+# left the model nothing to generalize about.
+#
+# Real investors are not perfectly rule-following: two people who fill out
+# an identical questionnaire can still have genuinely different risk
+# appetites for reasons the eight scoring rules cannot capture. This
+# constant models that residual human unpredictability as a small,
+# fixed-seed Gaussian perturbation added to the deterministic score before
+# labeling. It does not touch the eight rule weights and does not flip a
+# clearly Conservative or clearly Aggressive investor to the opposite end
+# -- it only blurs the boundary for borderline cases, which is exactly
+# where a real classifier should be forced to generalize rather than
+# memorize. Chosen at ~30% of the deterministic score's typical spread.
+BEHAVIORAL_NOISE_STD: Final[float] = 1.75
+
+#: Fixed seed for the behavioural noise draw, so relabeling is reproducible
+#: run-to-run given the same input dataset.
+BEHAVIORAL_NOISE_SEED: Final[int] = 42
+
 #: Regex used to extract numeric values from free-text columns
 #: (e.g. "3-5 years", "20%-30%").
 NUMBER_PATTERN: Final[re.Pattern] = re.compile(r"-?\d+\.?\d*")
@@ -737,6 +764,45 @@ def compute_investor_risk_score(df: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
+def apply_behavioral_noise(df: pd.DataFrame) -> pd.DataFrame:
+    """Perturb the deterministic investor_risk_score with realistic noise.
+
+    See the module-level comment above `BEHAVIORAL_NOISE_STD` for the full
+    rationale (this is the fix for the ML-audit finding that the label was
+    a perfectly deterministic function of the training features). The
+    pre-noise score is preserved as `investor_risk_score_deterministic` so
+    the exact rule-based value stays auditable; `investor_risk_score` (the
+    column labeling and training actually use downstream) becomes the
+    noised value.
+
+    Args:
+        df: The dataset with `investor_risk_score` already computed by
+            `compute_investor_risk_score`.
+
+    Returns:
+        A new DataFrame with `investor_risk_score_deterministic` (the
+        original rule-based score) and `behavioral_noise` added, and
+        `investor_risk_score` overwritten with the noised value.
+    """
+    result = df.copy()
+    rng = np.random.default_rng(BEHAVIORAL_NOISE_SEED)
+
+    result["investor_risk_score_deterministic"] = result["investor_risk_score"]
+    result["behavioral_noise"] = rng.normal(
+        loc=0.0, scale=BEHAVIORAL_NOISE_STD, size=len(result)
+    )
+    result["investor_risk_score"] = (
+        result["investor_risk_score_deterministic"] + result["behavioral_noise"]
+    )
+
+    logger.info(
+        "Applied behavioral noise (std=%.2f, seed=%d) to deterministic risk score.",
+        BEHAVIORAL_NOISE_STD,
+        BEHAVIORAL_NOISE_SEED,
+    )
+    return result
+
+
 # ----------------------------------------------------------------------------
 # Label Functions
 # ----------------------------------------------------------------------------
@@ -1018,6 +1084,7 @@ def main() -> None:
         return
 
     scored_df = compute_investor_risk_score(df)
+    scored_df = apply_behavioral_noise(scored_df)
     scored_df = assign_investor_risk_labels(scored_df)
 
     if not validate_scored_dataset(df, scored_df):

@@ -87,6 +87,11 @@ CLASSIFICATION_REPORT_FILEPATH: Final[Path] = REPORTS_DIR / "classification_repo
 #: Output path for the best hyperparameters found by GridSearchCV.
 BEST_PARAMS_FILEPATH: Final[Path] = REPORTS_DIR / "best_params.json"
 
+#: Output path for the machine-readable model performance metrics. The
+#: Streamlit demo app loads this file directly instead of hardcoding any
+#: accuracy figure -- see save_metrics_json() below.
+METRICS_JSON_FILEPATH: Final[Path] = REPORTS_DIR / "model_metrics.json"
+
 #: Directory where evaluation figures are saved.
 FIGURES_DIR: Final[Path] = REPORTS_DIR / "figures"
 
@@ -120,6 +125,8 @@ TARGET_COLUMN: Final[str] = "Investor_Risk_Level"
 LEAKAGE_COLUMNS: Final[list] = [
     "investor_risk_score",
     "investor_risk_score_raw",
+    "investor_risk_score_deterministic",
+    "behavioral_noise",
     "signal_agreement",
     "advisor_confidence",
     "total_investment_score",
@@ -769,6 +776,49 @@ def save_best_params(best_params: dict, cv_mean_accuracy: float) -> Optional[Pat
     return BEST_PARAMS_FILEPATH
 
 
+def save_metrics_json(metrics: dict, training_summary: dict) -> Optional[Path]:
+    """Persist model performance metrics as machine-readable JSON.
+
+    This is the single source of truth the Streamlit demo app reads for
+    the "Model Performance" section, so that page never hardcodes an
+    accuracy figure -- it always reflects whatever this training run
+    actually produced.
+
+    Args:
+        metrics: The dict returned by `evaluate_model`.
+        training_summary: The combined tuning/overfitting summary dict
+            (see `save_report`).
+
+    Returns:
+        The path the JSON file was saved to, or None if saving failed.
+    """
+    payload = {
+        "algorithm": "Random Forest Classifier",
+        "best_hyperparameters": training_summary["best_params"],
+        "cv_mean_accuracy": training_summary["cv_mean_accuracy"],
+        "oob_accuracy": training_summary["oob_score"],
+        "train_accuracy": training_summary["train_accuracy"],
+        "test_accuracy": training_summary["test_accuracy"],
+        "train_test_gap": training_summary["gap"],
+        "overfitting_detected": training_summary["overfitting_detected"],
+        "accuracy": metrics["accuracy"],
+        "precision_macro": metrics["precision"],
+        "recall_macro": metrics["recall"],
+        "f1_macro": metrics["f1"],
+        "roc_auc_macro_ovr": training_summary["roc_auc"],
+        "class_names": list(metrics["class_names"]),
+    }
+
+    try:
+        REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+        METRICS_JSON_FILEPATH.write_text(json.dumps(payload, indent=2))
+    except Exception:
+        logger.error("Failed to save metrics JSON to %s", METRICS_JSON_FILEPATH, exc_info=True)
+        return None
+
+    return METRICS_JSON_FILEPATH
+
+
 def save_train_test_split(
     X_train: pd.DataFrame,
     y_train: np.ndarray,
@@ -998,17 +1048,20 @@ def main() -> None:
         X_train_encoded, y_train, X_test_encoded, y_test, label_encoder
     )
     report_path = save_report(metrics, training_summary)
+    metrics_json_path = save_metrics_json(metrics, training_summary)
 
     if model_path is None or label_encoder_path is None or report_path is None:
         logger.error("One or more critical output files failed to save.")
         return
 
     logger.info(
-        "Additional artifacts saved | Ordinal encoder: %s | Best params: %s | Train split: %s | Test split: %s",
+        "Additional artifacts saved | Ordinal encoder: %s | Best params: %s | "
+        "Train split: %s | Test split: %s | Metrics JSON: %s",
         ordinal_encoder_path,
         best_params_path,
         train_split_path,
         test_split_path,
+        metrics_json_path,
     )
 
     summarize_results(X_train_encoded, X_test_encoded, metrics, training_summary, model_path, report_path)
