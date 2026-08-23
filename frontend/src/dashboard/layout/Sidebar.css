@@ -1,0 +1,93 @@
+.dsb-sidebar {
+  height: 100vh;
+  overflow: hidden;
+
+  border-right: 1px solid var(--line);
+  padding: 20px 16px;
+
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+}
+
+.dsb-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 0 8px;
+  margin-bottom: 28px;
+}
+
+.dsb-sidebar__logo-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--indigo);
+}
+
+.dsb-sidebar__brand-accent { color: var(--indigo); }
+
+.dsb-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dsb-sidebar__footer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.dsb-sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.dsb-sidebar__link:hover { background: var(--panel); color: var(--text); }
+
+.dsb-sidebar__link--active {
+  background: var(--indigo-soft);
+  color: var(--indigo);
+}
+
+.dsb-sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.dsb-sidebar__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--indigo-soft);
+  color: var(--indigo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.dsb-sidebar__user-name { font-size: 13px; font-weight: 600; margin: 0; }
+.dsb-sidebar__user-role { font-size: 11.5px; color: var(--muted-dim); margin: 0; }

@@ -1,0 +1,23 @@
+.dsb-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--line);
+}
+
+.dsb-topbar__greeting { font-size: 14px; color: var(--muted); margin: 0; }
+.dsb-topbar__greeting strong { color: var(--text); }
+
+.dsb-topbar__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--indigo);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
+}
