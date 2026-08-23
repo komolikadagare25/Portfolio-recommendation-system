@@ -1,0 +1,85 @@
+.shap-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.shap-panel__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.shap-panel__icon { font-size: 20px; }
+
+.shap-panel__title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.shap-panel__subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 20px;
+}
+
+.shap-panel__subtitle strong { color: var(--text); }
+
+.shap-panel__chart-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 18px;
+}
+
+.shap-panel__chart-tab {
+  background: none;
+  border: none;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.shap-panel__chart-tab--active {
+  color: var(--indigo);
+  border-bottom-color: var(--indigo);
+}
+
+.shap-panel__chart-card {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.shap-panel__chart-title {
+  text-align: center;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 20px;
+}
+
+.shap-panel__chart-placeholder {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted-dim);
+  padding: 40px 0;
+}
+
+.shap-panel__section {
+  margin-bottom: 20px;
+}
+
+.shap-panel__section:last-child {
+  margin-bottom: 0;
+}

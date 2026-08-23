@@ -1,0 +1,38 @@
+.lime-explanation {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.lime-explanation__toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  background: var(--bg);
+  border: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.lime-explanation__chevron {
+  margin-left: auto;
+  transition: transform 0.15s ease;
+  color: var(--muted);
+}
+
+.lime-explanation__body {
+  padding: 16px 20px 20px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.lime-explanation__body p { margin: 0 0 10px; }
+.lime-explanation__body ul { margin: 0 0 14px; padding-left: 20px; }
+.lime-explanation__body li { margin-bottom: 4px; color: var(--muted); }
+.lime-explanation__body li strong { color: var(--text); }

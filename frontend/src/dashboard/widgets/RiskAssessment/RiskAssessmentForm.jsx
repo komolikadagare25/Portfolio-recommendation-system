@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { riskQuestions } from "../../../data/riskQuestions";
+import RiskResultTabs from "./RiskResultTabs";
+import { fetchRiskAssessment } from "../../../api/riskAssessment";
 import "./RiskAssessmentForm.css";
 
 /**
@@ -12,6 +14,9 @@ import "./RiskAssessmentForm.css";
 export default function RiskAssessmentForm({ onComplete }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
+  const [result, setResult] = useState(null); // { prediction, portfolio, shap, lime }
+  const [status, setStatus] = useState("idle"); // idle | loading | error
+  const [errorMessage, setErrorMessage] = useState("");
 
   const totalQuestions = riskQuestions.length;
   const isResultStep = step === totalQuestions;
@@ -27,9 +32,26 @@ export default function RiskAssessmentForm({ onComplete }) {
     setAnswers((prev) => ({ ...prev, [currentQuestion.id]: val }));
   };
 
+  const runPrediction = async (finalAnswers) => {
+    setStatus("loading");
+    setErrorMessage("");
+    try {
+      const data = await fetchRiskAssessment(finalAnswers);
+      setResult(data);
+      setStatus("idle");
+    } catch (err) {
+      setStatus("error");
+      setErrorMessage(err.message || "Something went wrong reaching the prediction API.");
+    }
+  };
+
   const handleNext = () => {
-    if (step < totalQuestions - 1) setStep((s) => s + 1);
-    else setStep(totalQuestions);
+    if (step < totalQuestions - 1) {
+      setStep((s) => s + 1);
+    } else {
+      setStep(totalQuestions);
+      runPrediction(answers);
+    }
   };
 
   const handleBack = () => {
@@ -40,19 +62,37 @@ export default function RiskAssessmentForm({ onComplete }) {
   const hasAnsweredCurrent = currentAnswer !== undefined && currentAnswer !== "";
 
   if (isResultStep) {
+    if (status === "loading") {
+      return (
+        <div className="risk-form__status">
+          <Loader2 size={22} strokeWidth={2} className="risk-form__spinner" />
+          Running your prediction (model + SHAP + LIME)…
+        </div>
+      );
+    }
+
+    if (status === "error") {
+      return (
+        <div className="risk-form__status risk-form__status--error">
+          <p>{errorMessage}</p>
+          <button type="button" className="risk-form__next-btn" onClick={() => runPrediction(answers)}>
+            Try again
+          </button>
+        </div>
+      );
+    }
+
+    // `result` is null until the API responds; RiskResultTabs falls back to
+    // its bundled mock data if you pass it nothing, so this never crashes
+    // even before your backend is wired up.
     return (
-      <div className="risk-form risk-form--result">
-        <CheckCircle2 size={40} strokeWidth={1.5} className="risk-form__result-icon" />
-        <p className="risk-form__result-label">ALL SET</p>
-        <p className="risk-form__result-band">Answers ready</p>
-        <p className="risk-form__result-desc">
-          Your {totalQuestions} answers are ready to be sent to the risk model.
-          {/* TODO: once the backend endpoint exists, POST `answers` here instead of navigating directly */}
-        </p>
-        <button className="risk-form__submit-btn" onClick={() => onComplete?.(answers)}>
-          Continue to dashboard <ArrowRight size={16} strokeWidth={2} />
-        </button>
-      </div>
+      <RiskResultTabs
+        prediction={result?.prediction}
+        portfolio={result?.portfolio}
+        shap={result?.shap}
+        lime={result?.lime}
+        onContinue={() => onComplete?.(answers)}
+      />
     );
   }
 
