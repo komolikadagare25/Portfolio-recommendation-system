@@ -1,0 +1,187 @@
+.risk-form {
+  max-width: 560px;
+  margin: 0 auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 32px;
+}
+
+.risk-form__progress-track {
+  height: 6px;
+  background: var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.risk-form__progress-fill {
+  height: 100%;
+  background: var(--indigo);
+  border-radius: 4px;
+  transition: width 0.25s ease;
+}
+
+.risk-form__step-label {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted-dim);
+  margin: 0 0 18px;
+}
+
+.risk-form__question {
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 24px;
+  line-height: 1.4;
+}
+
+.risk-form__options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.risk-form__option {
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.risk-form__option:hover {
+  border-color: var(--indigo);
+}
+
+.risk-form__option--selected {
+  border-color: var(--indigo);
+  background: var(--indigo-soft);
+  color: var(--indigo);
+  font-weight: 500;
+}
+
+.risk-form__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.risk-form__back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 10px 4px;
+}
+
+.risk-form__back-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.risk-form__next-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--indigo);
+  color: #ffffff;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.risk-form__next-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ── Result screen ── */
+
+.risk-form--result {
+  text-align: center;
+  padding: 48px 32px;
+}
+
+.risk-form__result-icon {
+  color: var(--indigo);
+  margin: 0 auto 16px;
+}
+
+.risk-form__result-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--muted-dim);
+  margin: 0 0 8px;
+}
+
+.risk-form__result-band {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+.risk-form__result-confidence {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--indigo);
+  margin: 0 0 20px;
+}
+
+.risk-form__result-desc {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 400px;
+  margin: 0 auto 28px;
+}
+
+.risk-form__submit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--indigo);
+  color: #ffffff;
+  border: none;
+  padding: 13px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.risk-form__number-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  font-family: var(--font-ui);
+  outline: none;
+  margin-bottom: 28px;
+  box-sizing: border-box;
+}
+
+.risk-form__number-input:focus {
+  border-color: var(--indigo);
+}
