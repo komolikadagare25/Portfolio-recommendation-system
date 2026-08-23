@@ -1,0 +1,12 @@
+.risk-assessment-page h1 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 6px;
+  color: var(--text);
+}
+
+.risk-assessment-page > p {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin: 0 0 28px;
+}
