@@ -1,0 +1,32 @@
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.stat-card__label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--muted-dim);
+  margin: 0 0 10px;
+}
+
+.stat-card__value {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 6px;
+}
+
+.stat-card__caption {
+  font-size: 12px;
+  margin: 0;
+}
+
+.stat-card__caption--up { color: var(--teal); }
+.stat-card__caption--down { color: #f87171; }
+.stat-card__caption--warn { color: #f59e0b; }
+.stat-card__caption--neutral { color: var(--muted); }

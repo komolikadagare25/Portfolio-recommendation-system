@@ -1,0 +1,47 @@
+.shap-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.shap-list__row {
+  display: grid;
+  grid-template-columns: 110px 1fr 52px;
+  align-items: center;
+  gap: 12px;
+}
+
+.shap-list__name {
+  font-size: 12.5px;
+  color: var(--muted);
+  text-align: right;
+}
+
+.shap-list__bar-track {
+  height: 8px;
+  background: var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  display: block;
+}
+
+.shap-list__bar {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+}
+
+.shap-list__bar--pos { background: var(--indigo); }
+.shap-list__bar--neg { background: var(--teal); }
+
+.shap-list__value {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  text-align: right;
+}
+
+.shap-list__value--pos { color: var(--indigo); }
+.shap-list__value--neg { color: var(--teal); }
