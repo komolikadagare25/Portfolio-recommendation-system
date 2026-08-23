@@ -1,0 +1,647 @@
+/* ==========================================================================
+   AuthScreen.css
+   Portfolio AI — Light Blue/White Fintech Theme
+   ========================================================================== */
+
+.auth-screen {
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --line: #e2e8f0;
+
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-soft: rgba(37, 99, 235, 0.10);
+
+  --text: #0f2747;
+  --muted: #64748b;
+  --muted-dim: #94a3b8;
+
+  --success: #059669;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+
+  --font-ui: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 8px;
+
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--bg);
+
+  font-family: var(--font-ui);
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.auth-screen *,
+.auth-screen *::before,
+.auth-screen *::after {
+  box-sizing: border-box;
+}
+
+
+/* ── Main Card ─────────────────────────────────────────────────────────── */
+
+.auth-screen__card {
+  width: 100%;
+  max-width: 1024px;
+
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+
+  border: 1px solid var(--line);
+
+  box-shadow: 0 20px 50px rgba(15, 39, 71, 0.10);
+}
+
+@media (max-width: 800px) {
+  .auth-screen__card {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ── Market Panel ──────────────────────────────────────────────────────── */
+
+.market-panel {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 36px;
+
+  background:
+    radial-gradient(
+      circle at 20% 15%,
+      rgba(37, 99, 235, 0.12),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 80% 85%,
+      rgba(124, 58, 237, 0.10),
+      transparent 55%
+    ),
+    #f1f5f9;
+}
+
+@media (min-width: 800px) {
+  .market-panel {
+    display: flex;
+  }
+}
+
+
+/* ── Logo ───────────────────────────────────────────────────────────────── */
+
+.market-panel__logo-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.market-panel__logo-mark {
+  width: 32px;
+  height: 32px;
+
+  border-radius: var(--radius-sm);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #1d4ed8
+  );
+}
+
+.market-panel__logo-text {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+
+  color: var(--text);
+}
+
+.market-panel__logo-accent {
+  color: var(--primary);
+}
+
+.market-panel__tagline {
+  font-family: var(--font-mono);
+  font-size: 11px;
+
+  color: var(--muted-dim);
+
+  margin-top: 4px;
+}
+
+
+/* ── Pitch ─────────────────────────────────────────────────────────────── */
+
+.market-panel__pitch {
+  margin: 32px 0;
+}
+
+.market-panel__headline {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.35;
+
+  color: var(--text);
+
+  margin: 0;
+}
+
+.market-panel__subtext {
+  font-size: 13px;
+  line-height: 1.6;
+
+  color: var(--muted);
+
+  margin-top: 12px;
+}
+
+.market-panel__footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 32px;
+
+  font-size: 11px;
+  color: var(--muted-dim);
+}
+
+
+/* ── Ticker Card ───────────────────────────────────────────────────────── */
+
+.ticker-card {
+  border-radius: var(--radius-md);
+
+  padding: 16px;
+
+  background: #ffffff;
+  border: 1px solid var(--line);
+
+  box-shadow: 0 8px 20px rgba(15, 39, 71, 0.05);
+}
+
+.ticker-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 12px;
+}
+
+.ticker-card__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  font-weight: 500;
+
+  color: var(--muted-dim);
+}
+
+.ticker-card__status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  font-family: var(--font-mono);
+  font-size: 10px;
+
+  color: var(--success);
+}
+
+.ticker-card__dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: var(--success);
+
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.ticker-card__body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ticker-card__symbol {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+
+  color: var(--text);
+
+  margin: 0;
+}
+
+.ticker-card__value {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 600;
+
+  color: var(--text);
+
+  margin: 4px 0 0;
+}
+
+.ticker-card__change {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+
+  margin: 2px 0 0;
+}
+
+.ticker-card__change--up {
+  color: var(--success);
+}
+
+.ticker-card__change--down {
+  color: var(--danger);
+}
+
+.sparkline__line--up {
+  stroke: var(--primary);
+}
+
+.sparkline__line--down {
+  stroke: var(--danger);
+}
+
+
+/* ── Form Panel ────────────────────────────────────────────────────────── */
+
+.auth-form-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 48px 40px;
+
+  background: var(--panel);
+}
+
+.auth-form-panel__inner {
+  width: 100%;
+  max-width: 360px;
+
+  margin: 0 auto;
+}
+
+
+/* ── Login / Signup Switch ─────────────────────────────────────────────── */
+
+.mode-switch {
+  display: inline-flex;
+
+  padding: 4px;
+
+  border-radius: var(--radius-sm);
+
+  background: var(--bg);
+  border: 1px solid var(--line);
+
+  margin-bottom: 32px;
+}
+
+.mode-switch__btn {
+  padding: 8px 20px;
+
+  border-radius: 6px;
+  border: none;
+
+  background: transparent;
+
+  color: var(--muted);
+
+  font-size: 13px;
+  font-weight: 500;
+
+  font-family: var(--font-ui);
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.mode-switch__btn--active {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+
+/* ── Heading ───────────────────────────────────────────────────────────── */
+
+.auth-form-panel__title {
+  font-size: 20px;
+  font-weight: 600;
+
+  color: var(--text);
+
+  margin: 0 0 6px;
+}
+
+.auth-form-panel__subtitle {
+  font-size: 13px;
+
+  color: var(--muted);
+
+  margin: 0 0 32px;
+}
+
+
+/* ── Form ──────────────────────────────────────────────────────────────── */
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 16px;
+}
+
+
+/* ── Input Fields ──────────────────────────────────────────────────────── */
+
+.field {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+}
+
+.field__icon {
+  position: absolute;
+
+  left: 14px;
+
+  color: var(--muted-dim);
+
+  pointer-events: none;
+}
+
+.field__input {
+  width: 100%;
+
+  padding: 12px 16px 12px 40px;
+
+  border-radius: var(--radius-sm);
+
+  background: #ffffff;
+
+  border: 1px solid var(--line);
+
+  color: var(--text);
+
+  font-size: 14px;
+
+  font-family: var(--font-ui);
+
+  outline: none;
+
+  transition: border-color 0.15s ease,
+              box-shadow 0.15s ease;
+}
+
+.field__input--with-toggle {
+  padding-right: 44px;
+}
+
+.field__input::placeholder {
+  color: var(--muted-dim);
+}
+
+.field__input:focus {
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.field__toggle {
+  position: absolute;
+
+  right: 14px;
+
+  background: none;
+  border: none;
+
+  color: var(--muted-dim);
+
+  cursor: pointer;
+
+  display: flex;
+
+  padding: 0;
+}
+
+
+/* ── Risk Selection ────────────────────────────────────────────────────── */
+
+.risk-select__label {
+  font-size: 11px;
+  font-weight: 500;
+
+  letter-spacing: 0.03em;
+
+  color: var(--muted);
+}
+
+.risk-select__options {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 8px;
+
+  margin-top: 8px;
+}
+
+.risk-select__option {
+  padding: 9px 0;
+
+  border-radius: var(--radius-sm);
+
+  font-size: 12.5px;
+  font-weight: 500;
+
+  font-family: var(--font-ui);
+
+  background: #ffffff;
+
+  border: 1px solid var(--line);
+
+  color: var(--muted);
+
+  cursor: pointer;
+
+  transition: all 0.15s ease;
+}
+
+.risk-select__option:hover {
+  border-color: #93c5fd;
+
+  color: var(--primary);
+}
+
+.risk-select__option--active {
+  background: var(--primary-soft);
+
+  border-color: var(--primary);
+
+  color: var(--primary);
+}
+
+.risk-select__hint {
+  font-size: 11px;
+
+  color: var(--muted-dim);
+
+  margin: 6px 0 0;
+}
+
+
+/* ── Links ─────────────────────────────────────────────────────────────── */
+
+.auth-form__forgot {
+  display: flex;
+
+  justify-content: flex-end;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+
+  padding: 0;
+
+  font-size: 12.5px;
+  font-weight: 500;
+
+  color: var(--primary);
+
+  cursor: pointer;
+
+  font-family: var(--font-ui);
+}
+
+.link-btn:hover {
+  color: var(--primary-dark);
+}
+
+.link-btn--strong {
+  font-weight: 600;
+}
+
+
+/* ── Submit Button ─────────────────────────────────────────────────────── */
+
+.submit-btn {
+  width: 100%;
+
+  padding: 13px 0;
+
+  margin-top: 6px;
+
+  border-radius: var(--radius-sm);
+
+  border: none;
+
+  background: var(--primary);
+
+  color: #ffffff;
+
+  font-size: 13.5px;
+  font-weight: 600;
+
+  font-family: var(--font-ui);
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  transition: background 0.15s ease,
+              transform 0.15s ease;
+}
+
+.submit-btn:hover {
+  background: var(--primary-dark);
+
+  transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+
+  cursor: default;
+
+  transform: none;
+}
+
+.submit-btn__spinner {
+  width: 16px;
+  height: 16px;
+
+  border: 2px solid rgba(255, 255, 255, 0.35);
+
+  border-top-color: #ffffff;
+
+  border-radius: 50%;
+
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ── Bottom Switch ─────────────────────────────────────────────────────── */
+
+.auth-form-panel__switch {
+  text-align: center;
+
+  font-size: 12.5px;
+
+  color: var(--muted-dim);
+
+  margin-top: 28px;
+}
