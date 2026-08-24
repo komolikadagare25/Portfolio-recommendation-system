@@ -68,9 +68,11 @@ export default function RiskResultTabs({ onContinue, prediction, portfolio, shap
         )}
       </div>
 
-      <button className="risk-result-tabs__continue-btn" onClick={onContinue}>
-        Continue to dashboard <ArrowRight size={16} strokeWidth={2} />
-      </button>
+      {onContinue && (
+        <button className="risk-result-tabs__continue-btn" onClick={onContinue}>
+          Continue to dashboard <ArrowRight size={16} strokeWidth={2} />
+        </button>
+      )}
     </div>
   );
 }

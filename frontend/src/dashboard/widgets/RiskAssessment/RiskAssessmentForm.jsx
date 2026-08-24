@@ -1,22 +1,35 @@
 import React, { useState } from "react";
-import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { riskQuestions } from "../../../data/riskQuestions";
 import RiskResultTabs from "./RiskResultTabs";
-import { fetchRiskAssessment } from "../../../api/riskAssessment";
 import "./RiskAssessmentForm.css";
+
+// Pre-fill default values for any slider-group question's fields, so those
+// fields have a value even if the user never touches the sliders (matching
+// the reference app, where sliders start at 4 and count as answered).
+function buildInitialAnswers() {
+  const initial = {};
+  riskQuestions.forEach((q) => {
+    if (q.type === "slider-group") {
+      q.fields.forEach((f) => {
+        initial[f.id] = f.default;
+      });
+    }
+  });
+  return initial;
+}
 
 /**
  * @param {{ onComplete: (answers: Record<string, string|number>) => void }} props
  * `answers` keys match your dataset's column names exactly (age, gender,
  * Investment_Avenues, Factor, Objective, Duration, Invest_Monitor, Expect,
- * Avenue, Stock_Marktet) — ready to send straight to your backend/ML API.
+ * Avenue, Stock_Marktet, Mutual_Funds, Equity_Market, Debentures,
+ * Government_Bonds, Fixed_Deposits, PPF, Gold) — ready to send straight to
+ * your backend/ML API.
  */
 export default function RiskAssessmentForm({ onComplete }) {
   const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState({});
-  const [result, setResult] = useState(null); // { prediction, portfolio, shap, lime }
-  const [status, setStatus] = useState("idle"); // idle | loading | error
-  const [errorMessage, setErrorMessage] = useState("");
+  const [answers, setAnswers] = useState(buildInitialAnswers);
 
   const totalQuestions = riskQuestions.length;
   const isResultStep = step === totalQuestions;
@@ -32,26 +45,13 @@ export default function RiskAssessmentForm({ onComplete }) {
     setAnswers((prev) => ({ ...prev, [currentQuestion.id]: val }));
   };
 
-  const runPrediction = async (finalAnswers) => {
-    setStatus("loading");
-    setErrorMessage("");
-    try {
-      const data = await fetchRiskAssessment(finalAnswers);
-      setResult(data);
-      setStatus("idle");
-    } catch (err) {
-      setStatus("error");
-      setErrorMessage(err.message || "Something went wrong reaching the prediction API.");
-    }
+  const handleSliderChange = (fieldId, value) => {
+    setAnswers((prev) => ({ ...prev, [fieldId]: Number(value) }));
   };
 
   const handleNext = () => {
-    if (step < totalQuestions - 1) {
-      setStep((s) => s + 1);
-    } else {
-      setStep(totalQuestions);
-      runPrediction(answers);
-    }
+    if (step < totalQuestions - 1) setStep((s) => s + 1);
+    else setStep(totalQuestions);
   };
 
   const handleBack = () => {
@@ -59,41 +59,15 @@ export default function RiskAssessmentForm({ onComplete }) {
   };
 
   const currentAnswer = currentQuestion ? answers[currentQuestion.id] : undefined;
-  const hasAnsweredCurrent = currentAnswer !== undefined && currentAnswer !== "";
+  const isSliderGroup = currentQuestion?.type === "slider-group";
+  const hasAnsweredCurrent =
+    isSliderGroup || (currentAnswer !== undefined && currentAnswer !== "");
 
   if (isResultStep) {
-    if (status === "loading") {
-      return (
-        <div className="risk-form__status">
-          <Loader2 size={22} strokeWidth={2} className="risk-form__spinner" />
-          Running your prediction (model + SHAP + LIME)…
-        </div>
-      );
-    }
-
-    if (status === "error") {
-      return (
-        <div className="risk-form__status risk-form__status--error">
-          <p>{errorMessage}</p>
-          <button type="button" className="risk-form__next-btn" onClick={() => runPrediction(answers)}>
-            Try again
-          </button>
-        </div>
-      );
-    }
-
-    // `result` is null until the API responds; RiskResultTabs falls back to
-    // its bundled mock data if you pass it nothing, so this never crashes
-    // even before your backend is wired up.
-    return (
-      <RiskResultTabs
-        prediction={result?.prediction}
-        portfolio={result?.portfolio}
-        shap={result?.shap}
-        lime={result?.lime}
-        onContinue={() => onComplete?.(answers)}
-      />
-    );
+    // TODO: once the backend exists, POST `answers` to your risk-assessment
+    // endpoint here, receive back { band, confidence, shapFeatures }, and
+    // pass THAT into RiskResultTabs instead of its built-in mock data.
+    return <RiskResultTabs onContinue={() => onComplete?.(answers)} />;
   }
 
   return (
@@ -107,7 +81,7 @@ export default function RiskAssessmentForm({ onComplete }) {
 
       <h2 className="risk-form__question">{currentQuestion.question}</h2>
 
-      {currentQuestion.type === "number" ? (
+      {currentQuestion.type === "number" && (
         <input
           type="number"
           className="risk-form__number-input"
@@ -117,7 +91,9 @@ export default function RiskAssessmentForm({ onComplete }) {
           max={currentQuestion.max}
           placeholder={`Enter a number (${currentQuestion.min}-${currentQuestion.max})`}
         />
-      ) : (
+      )}
+
+      {currentQuestion.type === "select" && (
         <div className="risk-form__options">
           {currentQuestion.options.map((option) => (
             <button
@@ -128,6 +104,31 @@ export default function RiskAssessmentForm({ onComplete }) {
             >
               {option}
             </button>
+          ))}
+        </div>
+      )}
+
+      {isSliderGroup && (
+        <div className="risk-form__slider-grid">
+          {currentQuestion.fields.map((field) => (
+            <div key={field.id} className="risk-form__slider-item">
+              <div className="risk-form__slider-item-header">
+                <span className="risk-form__slider-label">{field.label}</span>
+                <span className="risk-form__slider-value">{answers[field.id]}</span>
+              </div>
+              <input
+                type="range"
+                className="risk-form__slider"
+                min={field.min}
+                max={field.max}
+                value={answers[field.id]}
+                onChange={(e) => handleSliderChange(field.id, e.target.value)}
+              />
+              <div className="risk-form__slider-scale">
+                <span>{field.min}</span>
+                <span>{field.max}</span>
+              </div>
+            </div>
           ))}
         </div>
       )}
