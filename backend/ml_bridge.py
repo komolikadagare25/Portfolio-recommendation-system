@@ -1,17 +1,16 @@
 """
 Bridges the FastAPI backend to the existing Python ML modules in ../ml/.
 
-The frontend questionnaire currently collects only 10 of the 24 fields
-the model was trained on. The remaining 14 use neutral defaults below.
-# TODO: collect these from a real questionnaire once the frontend
-# supports it — see riskQuestionsReal.js on the frontend side.
+The frontend questionnaire (riskQuestions.js) now collects all 24 fields
+the model needs. FIELD_NAME_MAP translates the frontend's field ids
+(matching riskQuestions.js) into the lowercase snake_case names the
+trained model expects (see predict_investor_risk.py). DEFAULT_FIELDS is
+kept only as a safety fallback in case a field is ever missing.
 """
 
 import sys
 from pathlib import Path
 
-# ml/ lives one directory above backend/, so add the project root to
-# sys.path the same way demo/app.py does.
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
@@ -21,7 +20,35 @@ from ml.portfolio.src.portfolio_recommender import generate_portfolio
 from ml.explainability.src.shap_explainer import generate_shap_explanation
 from ml.explainability.src.lime_explainer import generate_lime_explanation
 
-# Neutral defaults for the 14 fields the current questionnaire doesn't collect.
+# Maps frontend field ids (riskQuestions.js) -> model's expected field names.
+FIELD_NAME_MAP = {
+    "age": "age",
+    "gender": "gender",
+    "Investment_Avenues": "investment_avenues",
+    "Stock_Marktet": "stock_market",
+    "Mutual_Funds": "mutual_funds",
+    "Equity_Market": "equity_market",
+    "Debentures": "debentures",
+    "Government_Bonds": "government_bonds",
+    "Fixed_Deposits": "fixed_deposits",
+    "PPF": "ppf",
+    "Gold": "gold",
+    "Factor": "factor",
+    "Objective": "objective",
+    "Purpose": "purpose",
+    "Duration": "duration",
+    "Invest_Monitor": "invest_monitor",
+    "Expect": "expect",
+    "Avenue": "avenue",
+    "Savings_Objective": "what_are_your_savings_objectives",
+    "Reason_Equity": "reason_equity",
+    "Reason_Mutual": "reason_mutual",
+    "Reason_Bonds": "reason_bonds",
+    "Reason_FD": "reason_fd",
+    "Source": "source",
+}
+
+# Fallback only — used if a field is ever missing from the frontend payload.
 DEFAULT_FIELDS = {
     "mutual_funds": 4,
     "equity_market": 4,
@@ -41,33 +68,18 @@ DEFAULT_FIELDS = {
 
 
 def build_full_model_input(questionnaire_answers: dict) -> dict:
-    """Maps the 10 frontend fields into the model's field names, then fills
-    the remaining 14 fields — using a real value from questionnaire_answers
-    if the frontend ever sends one under the model's own field name (see
-    DEFAULT_FIELDS keys above), falling back to the neutral default only
-    when no real value is present. This means once the frontend starts
-    collecting these fields, they'll be used automatically with no backend
-    change required — as long as the frontend sends them under these exact
-    snake_case names (e.g. "mutual_funds", "equity_market"), the same way
-    it already does for the existing 10 dataset-matched fields.
-    """
-    mapped = {
-        "gender": questionnaire_answers["gender"],
-        "age": questionnaire_answers["age"],
-        "investment_avenues": questionnaire_answers["Investment_Avenues"],
-        "stock_market": questionnaire_answers["Stock_Marktet"],
-        "factor": questionnaire_answers["Factor"],
-        "objective": questionnaire_answers["Objective"],
-        "duration": questionnaire_answers["Duration"],
-        "invest_monitor": questionnaire_answers["Invest_Monitor"],
-        "expect": questionnaire_answers["Expect"],
-        "avenue": questionnaire_answers["Avenue"],
-    }
+    """Renames frontend field ids to the model's expected names, filling
+    in a neutral default only if a field is genuinely missing."""
+    model_input = {}
+    for frontend_id, model_key in FIELD_NAME_MAP.items():
+        if frontend_id in questionnaire_answers:
+            model_input[model_key] = questionnaire_answers[frontend_id]
+        elif model_key in DEFAULT_FIELDS:
+            model_input[model_key] = DEFAULT_FIELDS[model_key]
+        else:
+            raise ValueError(f"Missing required questionnaire field: {frontend_id}")
+    return model_input
 
-    for field, default_value in DEFAULT_FIELDS.items():
-        mapped[field] = questionnaire_answers.get(field, default_value)
-
-    return mapped
 
 def run_full_pipeline(questionnaire_answers: dict) -> dict:
     """Runs the entire ML pipeline and returns everything a Report needs to store."""

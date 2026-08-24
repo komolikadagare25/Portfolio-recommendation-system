@@ -30,8 +30,8 @@ export default function RiskProfileBanner({
         </p>
 
         <p className="risk-banner__meta">
-          Last assessed: {profile.lastAssessed} · Model{" "}
-          {profile.modelVersion}
+          Last assessed: {profile.lastAssessed}
+          {modelVersion ? ` · Model ${modelVersion}` : ""}
         </p>
       </div>
 

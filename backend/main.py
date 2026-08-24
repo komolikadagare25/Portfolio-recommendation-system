@@ -10,11 +10,18 @@ from database import engine, Base, get_db
 import models
 import schemas
 from security import hash_password, verify_password, create_access_token, get_current_user
+from fastapi.middleware.cors import CORSMiddleware
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Portfolio Recommendation System API")
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/health")
 def health_check():
