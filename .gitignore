@@ -1,0 +1,19 @@
+﻿# Python virtual environments
+venv/
+*/venv/
+.venv/
+*/.venv/
+__pycache__/
+*.pyc
+
+# Backend local files
+backend/app.db
+backend/.env
+
+# Node
+node_modules/
+*/node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
