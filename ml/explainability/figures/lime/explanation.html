@@ -37089,25 +37089,25 @@
 /***/ })
 /******/ ]);
 //# sourceMappingURL=bundle.js.map </script></head><body>
-        <div class="lime top_div" id="top_divFSUCNL1I9689Y94"></div>
+        <div class="lime top_div" id="top_divLWCCELGAYKWE0DQ"></div>
         
         <script>
-        var top_div = d3.select('#top_divFSUCNL1I9689Y94').classed('lime top_div', true);
+        var top_div = d3.select('#top_divLWCCELGAYKWE0DQ').classed('lime top_div', true);
         
             var pp_div = top_div.append('div')
                                 .classed('lime predict_proba', true);
             var pp_svg = pp_div.append('svg').style('width', '100%');
-            var pp = new lime.PredictProba(pp_svg, ["Aggressive", "Conservative", "Moderate"], [0.30194657564442273, 0.3502500657786478, 0.34780335857692957]);
+            var pp = new lime.PredictProba(pp_svg, ["Aggressive", "Conservative", "Moderate"], [0.3458286637503023, 0.3672039737930438, 0.2869673624566541]);
             
         
         var exp_div;
             var exp = new lime.Explanation(["Aggressive", "Conservative", "Moderate"]);
         
                 exp_div = top_div.append('div').classed('lime explanation', true);
-                exp.show([["equity_market <= 3.00", 0.2786588247358738], ["fixed_deposits <= 2.00", -0.11761275030895822], ["ppf <= 1.00", -0.08595378688819617], ["1.00 < duration <= 2.00", 0.05236725344206743], ["mutual_funds > 3.00", -0.03907886183588474], ["reason_bonds <= 0.00", -0.02676190156209077], ["0.00 < source <= 2.00", 0.01692763158524583], ["6.00 < gold <= 7.00", -0.016532551556107746], ["age > 31.00", 0.016166277285834595], ["0.00 < gender <= 1.00", -0.013987848209153693]], 1, exp_div);
+                exp.show([["3.00 < equity_market <= 4.00", -0.20695343577061331], ["ppf > 2.00", 0.12856662058260687], ["1.00 < duration <= 2.00", 0.05975659289493896], ["mutual_funds > 3.00", -0.03888541759564092], ["2.00 < fixed_deposits <= 4.00", -0.03524089785062868], ["age <= 25.00", -0.030428501608104137], ["reason_bonds <= 0.00", -0.02382716262968453], ["0.00 < source <= 2.00", 0.019475766303886304], ["reason_fd <= 0.00", -0.01481434973070432], ["government_bonds <= 4.00", 0.013248267186815254]], 1, exp_div);
                 
         var raw_div = top_div.append('div');
-            exp.show_raw_tabular([["equity_market", "1.00", 0.2786588247358738], ["fixed_deposits", "1.00", -0.11761275030895822], ["ppf", "1.00", -0.08595378688819617], ["duration", "2.00", 0.05236725344206743], ["mutual_funds", "7.00", -0.03907886183588474], ["reason_bonds", "0.00", -0.02676190156209077], ["source", "1.00", 0.01692763158524583], ["gold", "7.00", -0.016532551556107746], ["age", "45.00", 0.016166277285834595], ["gender", "1.00", -0.013987848209153693]], 1, raw_div);
+            exp.show_raw_tabular([["equity_market", "4.00", -0.20695343577061331], ["ppf", "4.00", 0.12856662058260687], ["duration", "2.00", 0.05975659289493896], ["mutual_funds", "4.00", -0.03888541759564092], ["fixed_deposits", "4.00", -0.03524089785062868], ["age", "25.00", -0.030428501608104137], ["reason_bonds", "0.00", -0.02382716262968453], ["source", "1.00", 0.019475766303886304], ["reason_fd", "0.00", -0.01481434973070432], ["government_bonds", "4.00", 0.013248267186815254]], 1, raw_div);
         
         </script>
         </body></html>

@@ -1,17 +1,23 @@
 import React from "react";
+import RecommendationsExplorer from "../../dashboard/widgets/Recommendations/RecommendationsExplorer";
+import { recommendedStocks } from "../../data/recommendationsMock";
 import "./Recommendations.css";
 
 /**
- * TODO:
- * - Full list of recommended stocks (not just the dashboard preview)
- * - Filters: sector, risk level, expected return
- * - Each row expandable to show its SHAP/LIME "why recommended" explanation
+ * TODO: once your backend exists, fetch the real recommendation list (and
+ * per-stock SHAP/LIME reasons) here instead of importing recommendationsMock.
  */
 export default function Recommendations() {
   return (
     <div className="recommendations-page">
       <h1>Recommendations</h1>
-      <p>Build this page's content here.</p>
+      <p>
+        Your full recommended stock list, based on your latest risk assessment.
+        Filter by sector, risk level, or expected return, and expand any row
+        to see why it was recommended.
+      </p>
+
+      <RecommendationsExplorer stocks={recommendedStocks} />
     </div>
   );
 }

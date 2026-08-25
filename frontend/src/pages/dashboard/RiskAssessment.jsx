@@ -1,26 +1,20 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import RiskAssessmentForm from "../../dashboard/widgets/RiskAssessment/RiskAssessmentForm";
+import { usePortfolio } from "../../context/PortfolioContext";
 import "./RiskAssessment.css";
 
 export default function RiskAssessment() {
   const navigate = useNavigate();
+  const { setResult } = usePortfolio();
 
-  const handleComplete = (answers) => {
-    // `answers` keys match your dataset columns exactly, e.g.:
-    // { age: 29, gender: "Male", Investment_Avenues: "Yes", Factor: "Risk", ... }
-    //
-    // TODO: once your backend endpoint exists, send it like this:
-    // const res = await fetch("/api/risk-assessment", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(answers),
-    // });
-    // const { risk_level, confidence } = await res.json();
-    // then store risk_level/confidence (e.g. via AuthContext) before navigating.
-
-    console.log("Risk assessment answers (ready for backend):", answers);
-    navigate("/dashboard");
+  // `result` is the real backend response once /api/risk-assessment exists:
+  // { prediction, portfolio, shap, lime } — see api/riskAssessment.js for the
+  // exact shape. `answers` are the raw questionnaire answers (dataset-column
+  // keys) in case you want to log/send them anywhere else too.
+  const handleComplete = (result, answers) => {
+    setResult(result);
+    navigate("/dashboard/portfolio");
   };
 
   return (

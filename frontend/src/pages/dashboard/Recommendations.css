@@ -1,3 +1,10 @@
 .recommendations-page {
-  /* page-specific styles go here */
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.recommendations-page p {
+  margin: -8px 0 4px;
+  max-width: 640px;
 }
