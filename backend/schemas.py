@@ -52,3 +52,6 @@ class ReportSummary(BaseModel):
 
 class Config:
         from_attributes = True
+
+class InvestmentPlanRequest(BaseModel):
+    amount: float

@@ -12,6 +12,7 @@ import models
 import schemas
 from security import hash_password, verify_password, create_access_token, get_current_user
 from fastapi.middleware.cors import CORSMiddleware
+from stock_prices import build_investment_plan
 
 Base.metadata.create_all(bind=engine)
 
@@ -122,6 +123,32 @@ def get_report(
         raise HTTPException(status_code=404, detail="Report not found")
 
     return _report_to_out(report)
+
+@app.post("/reports/{report_id}/investment-plan")
+def create_investment_plan(
+    report_id: int,
+    payload: schemas.InvestmentPlanRequest,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    report = (
+        db.query(models.Report)
+        .filter(models.Report.id == report_id, models.Report.user_id == current_user.id)
+        .first()
+    )
+    if report is None:
+        raise HTTPException(status_code=404, detail="Report not found")
+
+    if payload.amount <= 0:
+        raise HTTPException(status_code=400, detail="Amount must be positive")
+
+    portfolio_result = json.loads(report.portfolio_result)
+    plan = build_investment_plan(
+        total_amount=payload.amount,
+        asset_allocation=portfolio_result["asset_allocation"],
+        recommended_stocks=portfolio_result["recommended_stocks"],
+    )
+    return plan
 
 
 def _report_to_out(report: models.Report) -> dict:

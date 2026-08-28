@@ -7,6 +7,10 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:800
 
 export default function MyPortfolio() {
   const [report, setReport] = useState(null);
+  const [amount, setAmount] = useState("");
+  const [plan, setPlan] = useState(null);
+  const [planLoading, setPlanLoading] = useState(false);
+  const [planError, setPlanError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -39,6 +43,38 @@ export default function MyPortfolio() {
     }
     loadLatestReport();
   }, [token]);
+
+    const handleBuildPlan = async () => {
+    setPlanError(null);
+    setPlan(null);
+
+    const numericAmount = parseFloat(amount);
+    if (!numericAmount || numericAmount <= 0) {
+      setPlanError("Enter a valid amount greater than 0");
+      return;
+    }
+
+    setPlanLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/reports/${report.id}/investment-plan`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ amount: numericAmount }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.detail || `Failed (${res.status})`);
+      }
+      setPlan(await res.json());
+    } catch (err) {
+      setPlanError(err.message);
+    } finally {
+      setPlanLoading(false);
+    }
+  };
 
   if (loading) return <div className="myPortfolio-page"><h1>My Portfolio</h1><p>Loading...</p></div>;
   if (error) return <div className="myPortfolio-page"><h1>My Portfolio</h1><p style={{ color: "red" }}>{error}</p></div>;
@@ -97,7 +133,64 @@ export default function MyPortfolio() {
         ))}
       </ul>
 
-      <p><em>{portfolio_result.investment_advice}</em></p>
+            <p><em>{portfolio_result.investment_advice}</em></p>
+
+      <h2>Build Your Portfolio</h2>
+      <p>Enter an amount to see exactly how many shares of each recommended stock you could buy today, at live market prices.</p>
+
+      <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
+        <input
+          type="number"
+          placeholder="e.g. 100000"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          style={{ padding: "8px", border: "1px solid #ccc", borderRadius: "6px", width: "200px" }}
+        />
+        <button
+          onClick={handleBuildPlan}
+          disabled={planLoading}
+          style={{ padding: "8px 16px", borderRadius: "6px", border: "none", background: "#3b82f6", color: "#fff", cursor: "pointer" }}
+        >
+          {planLoading ? "Fetching live prices..." : "Build Plan"}
+        </button>
+      </div>
+
+      {planError && <p style={{ color: "red" }}>{planError}</p>}
+
+      {plan && (
+        <div style={{ border: "1px solid #ddd", borderRadius: "8px", padding: "16px" }}>
+          <h3>Category Breakdown</h3>
+          <ul>
+            {Object.entries(plan.category_amounts).map(([k, v]) => (
+              <li key={k}>{k}: ₹{v.toLocaleString()}</li>
+            ))}
+          </ul>
+
+          <h3>Stock Purchase Plan</h3>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ textAlign: "left", borderBottom: "1px solid #ddd" }}>
+                <th style={{ padding: "6px" }}>Stock</th>
+                <th style={{ padding: "6px" }}>Price</th>
+                <th style={{ padding: "6px" }}>Shares</th>
+                <th style={{ padding: "6px" }}>Invested</th>
+                <th style={{ padding: "6px" }}>Leftover</th>
+              </tr>
+            </thead>
+            <tbody>
+              {plan.stock_plan.map((s) => (
+                <tr key={s.stock} style={{ borderBottom: "1px solid #f0f0f0" }}>
+                  <td style={{ padding: "6px" }}>{s.stock}</td>
+                  <td style={{ padding: "6px" }}>{s.price ? `₹${s.price}` : "—"}</td>
+                  <td style={{ padding: "6px" }}>{s.shares ?? "—"}</td>
+                  <td style={{ padding: "6px" }}>{s.invested_amount ? `₹${s.invested_amount.toLocaleString()}` : "—"}</td>
+                  <td style={{ padding: "6px" }}>{s.leftover ? `₹${s.leftover.toLocaleString()}` : "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
