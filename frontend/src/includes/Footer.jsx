@@ -1,68 +1,86 @@
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import "./Footer.css";
 
+function Footer() {
+  return (
+    <footer className="new-footer">
+      <div className="features-container footer-container">
 
-function Footer(){
+        {/* Brand */}
+        <div className="footer-brand">
+          <h2>
+            Portfolio<span>IQ</span>
+          </h2>
 
-return (
+          <p>
+            AI-powered portfolio recommendations
+            <br />
+            with explainable machine learning.
+          </p>
+        </div>
 
-<footer className="footer">
+        {/* Product */}
+        <div className="footer-column">
+          <h4>Product</h4>
 
+          <Link to="/dashboard/recommendations">
+            Recommendations
+          </Link>
 
-<div className="footer-brand">
+          <Link to="/dashboard/risk-assessment">
+            Risk Analysis
+          </Link>
 
-<h2>
-Portfolio<span>IQ</span>
-</h2>
+          <Link to="/dashboard">
+            Dashboard
+          </Link>
+        </div>
 
-<p>
-AI-powered portfolio recommendations
-with explainable machine learning.
-</p>
+        {/* Company */}
+        <div className="footer-column">
+          <h4>Company</h4>
 
-</div>
+          <Link to="/features">
+            About
+          </Link>
 
+          <Link to="/features">
+            Contact
+          </Link>
 
+          <Link to="/features">
+            Privacy
+          </Link>
+        </div>
 
-<div className="footer-links">
+        {/* Newsletter */}
+        <div className="footer-column newsletter">
+          <h4>Newsletter</h4>
 
-<div>
-<h4>Product</h4>
+          <p>
+            Stay updated with the latest insights and features.
+          </p>
 
-<p>Recommendations</p>
-<p>Risk Analysis</p>
-<p>Dashboard</p>
+          <div className="newsletter-form">
+            <input
+              type="email"
+              placeholder="Enter your email"
+            />
 
-</div>
+            <button type="button" aria-label="Subscribe">
+              <ArrowRight size={18} />
+            </button>
+          </div>
+        </div>
 
+      </div>
 
-
-<div>
-
-<h4>Company</h4>
-
-<p>About</p>
-<p>Contact</p>
-<p>Privacy</p>
-
-</div>
-
-
-</div>
-
-
-
-<div className="footer-bottom">
-
-© 2026 PortfolioIQ. Academic Demo Project.
-
-</div>
-
-
-</footer>
-
-)
-
+      <div className="footer-bottom">
+        © 2026 PortfolioIQ. Academic Demo Project.
+      </div>
+    </footer>
+  );
 }
-
 
 export default Footer;

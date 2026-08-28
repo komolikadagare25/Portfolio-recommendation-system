@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import RiskAssessmentForm from "../../dashboard/widgets/RiskAssessment/RiskAssessmentForm";
+import { usePortfolio } from "../../context/PortfolioContext";
 import "./RiskAssessment.css";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";

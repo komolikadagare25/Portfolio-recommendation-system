@@ -4,12 +4,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 
 import { AuthProvider } from "./context/AuthContext";
-import { PortfolioProvider } from "./context/PortfolioContext";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import { PortfolioProvider } from "./context/PortfolioContext";
 
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Features from "./pages/Features";
+import Design from "./pages/SystemDesign";
 
 import DashboardLayout from "./dashboard/layout/DashboardLayout";
 import DashboardHome from "./pages/dashboard/DashboardHome";
@@ -27,27 +29,51 @@ root.render(
     <BrowserRouter>
       <AuthProvider>
         <PortfolioProvider>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+          <Routes>
 
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<DashboardHome />} />
-            <Route path="risk-assessment" element={<RiskAssessment />} />
-            <Route path="portfolio" element={<MyPortfolio />} />
-            <Route path="recommendations" element={<Recommendations />} />
-            <Route path="history" element={<History />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="help" element={<Help />} />
-          </Route>
+            {/* Public Routes */}
+            <Route path="/" element={<Landing />} />
+            <Route path="/features" element={<Features />} />
+            <Route path="/design" element={<Design />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+
+            {/* Protected Dashboard Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<DashboardHome />} />
+              <Route
+                path="risk-assessment"
+                element={<RiskAssessment />}
+              />
+              <Route
+                path="portfolio"
+                element={<MyPortfolio />}
+              />
+              <Route
+                path="recommendations"
+                element={<Recommendations />}
+              />
+              <Route
+                path="history"
+                element={<History />}
+              />
+              <Route
+                path="settings"
+                element={<Settings />}
+              />
+              <Route
+                path="help"
+                element={<Help />}
+              />
+            </Route>
+
           </Routes>
         </PortfolioProvider>
       </AuthProvider>
