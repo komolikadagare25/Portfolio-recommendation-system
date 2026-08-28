@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 
 import { AuthProvider } from "./context/AuthContext";
+import { PortfolioProvider } from "./context/PortfolioContext";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 import Landing from "./pages/Landing";
@@ -25,6 +26,7 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
+        <PortfolioProvider>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
@@ -46,7 +48,8 @@ root.render(
             <Route path="settings" element={<Settings />} />
             <Route path="help" element={<Help />} />
           </Route>
-        </Routes>
+          </Routes>
+        </PortfolioProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

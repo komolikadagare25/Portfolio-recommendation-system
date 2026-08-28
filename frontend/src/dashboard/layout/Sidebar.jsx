@@ -1,4 +1,6 @@
 import React from "react";
+import { LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -27,7 +29,14 @@ const FOOTER_ITEMS = [
 ];
 
 export default function Sidebar() {
-  const { user } = useAuth();
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    logout();
+    navigate("/login");
+  };
 
   return (
     <aside className="dsb-sidebar">
@@ -65,12 +74,15 @@ export default function Sidebar() {
         ))}
       </div>
 
-      <div className="dsb-sidebar__user">
+            <div className="dsb-sidebar__user">
         <div className="dsb-sidebar__avatar">{(user?.name || "U").charAt(0)}</div>
         <div>
           <p className="dsb-sidebar__user-name">{user?.name || "User"}</p>
           <p className="dsb-sidebar__user-role">Retail Investor</p>
         </div>
+        <button onClick={handleLogout} className="dsb-sidebar__link" style={{ marginLeft: "auto" }}>
+          <LogOut size={17} strokeWidth={1.75} />
+        </button>
       </div>
     </aside>
   );

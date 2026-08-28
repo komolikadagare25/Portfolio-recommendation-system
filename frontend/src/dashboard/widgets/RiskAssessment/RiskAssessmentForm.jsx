@@ -1,12 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { riskQuestions } from "../../../data/riskQuestions";
 import RiskResultTabs from "./RiskResultTabs";
 import "./RiskAssessmentForm.css";
+import { usePortfolio } from "../../../context/PortfolioContext";
 
-// Pre-fill default values for any slider-group question's fields, so those
-// fields have a value even if the user never touches the sliders (matching
-// the reference app, where sliders start at 4 and count as answered).
 function buildInitialAnswers() {
   const initial = {};
   riskQuestions.forEach((q) => {
@@ -19,22 +17,87 @@ function buildInitialAnswers() {
   return initial;
 }
 
+function reportToResultProps(report, answers) {
+  const confidencePct = +(parseFloat(report.confidence) * 100).toFixed(2);
+
+  return {
+    prediction: {
+      riskLevel: report.risk_level,
+      confidence: confidencePct,
+      investmentHorizon: report.portfolio_result.investment_horizon,
+      riskDescription: report.portfolio_result.risk_description,
+      investorSummary: {
+        age: answers.age,
+        objective: answers.Objective,
+        preferredAsset: answers.Avenue,
+        duration: answers.Duration,
+      },
+    },
+    portfolio: {
+      allocation: Object.entries(report.portfolio_result.asset_allocation).map(([label, pct]) => ({
+        label,
+        pct,
+      })),
+      sectors: report.portfolio_result.recommended_sectors,
+      stocks: report.portfolio_result.recommended_stocks,
+      advice: report.portfolio_result.investment_advice,
+    },
+    shap: {
+      predictedBand: report.risk_level,
+      confidence: confidencePct,
+      features: [
+        ...report.shap_result.top_positive_features,
+        ...report.shap_result.top_negative_features,
+      ].map((f) => ({ feature: f.feature, value: f.impact })),
+    },
+    lime: {
+      predictedBand: report.risk_level,
+      confidence: confidencePct,
+      // intercept / localModelScore intentionally omitted — the ML
+      // pipeline doesn't compute them; LimeExplanationPanel handles
+      // their absence gracefully.
+      features: report.lime_result.top_features.map((f) => ({
+        feature: f.feature,
+        condition: f.feature,
+        weight: f.weight,
+      })),
+    },
+  };
+}
+
 /**
- * @param {{ onComplete: (answers: Record<string, string|number>) => void }} props
- * `answers` keys match your dataset's column names exactly (age, gender,
- * Investment_Avenues, Factor, Objective, Duration, Invest_Monitor, Expect,
- * Avenue, Stock_Marktet, Mutual_Funds, Equity_Market, Debentures,
- * Government_Bonds, Fixed_Deposits, PPF, Gold) — ready to send straight to
- * your backend/ML API.
+ * @param {{
+ *   onSubmitAnswers: (answers: object) => Promise<object>,
+ *   onComplete: (answers: object) => void
+ * }} props
  */
-export default function RiskAssessmentForm({ onComplete }) {
+export default function RiskAssessmentForm({ onSubmitAnswers, onComplete }) {
   const [step, setStep] = useState(0);
+  const { setResult } = usePortfolio();
   const [answers, setAnswers] = useState(buildInitialAnswers);
+  const [report, setReport] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const totalQuestions = riskQuestions.length;
   const isResultStep = step === totalQuestions;
   const currentQuestion = riskQuestions[step];
   const progressPct = Math.min((step / totalQuestions) * 100, 100);
+
+  useEffect(() => {
+    if (!isResultStep || report || submitting) return;
+
+    setSubmitting(true);
+    setSubmitError(null);
+    onSubmitAnswers(answers)
+      .then((data) => {
+        setReport(data);
+        setResult(reportToResultProps(data, answers));
+      })
+      .catch((err) => setSubmitError(err.message))
+      .finally(() => setSubmitting(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isResultStep]);
 
   const handleSelect = (value) => {
     setAnswers((prev) => ({ ...prev, [currentQuestion.id]: value }));
@@ -64,10 +127,39 @@ export default function RiskAssessmentForm({ onComplete }) {
     isSliderGroup || (currentAnswer !== undefined && currentAnswer !== "");
 
   if (isResultStep) {
-    // TODO: once the backend exists, POST `answers` to your risk-assessment
-    // endpoint here, receive back { band, confidence, shapFeatures }, and
-    // pass THAT into RiskResultTabs instead of its built-in mock data.
-    return <RiskResultTabs onContinue={() => onComplete?.(answers)} />;
+    if (submitting) {
+      return <div className="risk-form"><p>Generating your report...</p></div>;
+    }
+    if (submitError) {
+      return (
+        <div className="risk-form">
+          <p style={{ color: "red" }}>{submitError}</p>
+          <button
+            type="button"
+            className="risk-form__next-btn"
+            onClick={() => {
+              setReport(null);
+              setSubmitError(null);
+            }}
+          >
+            Retry
+          </button>
+        </div>
+      );
+    }
+    if (report) {
+      const resultProps = reportToResultProps(report, answers);
+      return (
+        <RiskResultTabs
+          onContinue={() => onComplete?.(answers)}
+          prediction={resultProps.prediction}
+          portfolio={resultProps.portfolio}
+          shap={resultProps.shap}
+          lime={resultProps.lime}
+        />
+      );
+    }
+    return null;
   }
 
   return (

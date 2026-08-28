@@ -33,16 +33,22 @@ export default function LimeExplanationPanel({ explanation }) {
         Explaining prediction: <strong>{predictedBand}</strong> (confidence: {confidence}%)
       </p>
 
-      <div className="lime-panel__meta-row">
-        <div className="lime-panel__meta-item">
-          <span className="lime-panel__meta-label">Local model intercept</span>
-          <span className="lime-panel__meta-value">{intercept.toFixed(4)}</span>
+            {(intercept !== undefined || localModelScore !== undefined) && (
+        <div className="lime-panel__meta-row">
+          {intercept !== undefined && (
+            <div className="lime-panel__meta-item">
+              <span className="lime-panel__meta-label">Local model intercept</span>
+              <span className="lime-panel__meta-value">{intercept.toFixed(4)}</span>
+            </div>
+          )}
+          {localModelScore !== undefined && (
+            <div className="lime-panel__meta-item">
+              <span className="lime-panel__meta-label">Local model fit (R²)</span>
+              <span className="lime-panel__meta-value">{localModelScore.toFixed(2)}</span>
+            </div>
+          )}
         </div>
-        <div className="lime-panel__meta-item">
-          <span className="lime-panel__meta-label">Local model fit (R²)</span>
-          <span className="lime-panel__meta-value">{localModelScore.toFixed(2)}</span>
-        </div>
-      </div>
+      )}
 
       <div className="lime-panel__chart-tabs">
         {CHART_TABS.map((tab) => (
