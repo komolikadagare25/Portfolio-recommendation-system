@@ -89,7 +89,41 @@ export default function Recommendations() {
         ))}
       </ul>
 
-      <p><em>{portfolio_result.investment_advice}</em></p>
+            <p><em>{portfolio_result.investment_advice}</em></p>
+
+      {portfolio_result.personalization_explanation && (
+        <>
+          <h2>Why your allocation looks like this</h2>
+          <p>{portfolio_result.personalization_explanation.summary}</p>
+
+          <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "16px" }}>
+            <thead>
+              <tr style={{ textAlign: "left", borderBottom: "1px solid #ddd" }}>
+                <th style={{ padding: "6px" }}>Category</th>
+                <th style={{ padding: "6px" }}>Standard Template</th>
+                <th style={{ padding: "6px" }}>Your Allocation</th>
+                <th style={{ padding: "6px" }}>Change</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(portfolio_result.personalization_explanation.final_allocation).map(([category, finalVal]) => {
+                const baseVal = portfolio_result.personalization_explanation.base_allocation[category];
+                const delta = finalVal - baseVal;
+                return (
+                  <tr key={category} style={{ borderBottom: "1px solid #f0f0f0" }}>
+                    <td style={{ padding: "6px" }}>{category}</td>
+                    <td style={{ padding: "6px" }}>{baseVal}%</td>
+                    <td style={{ padding: "6px" }}>{finalVal}%</td>
+                    <td style={{ padding: "6px", color: delta > 0 ? "green" : delta < 0 ? "red" : "#666" }}>
+                      {delta > 0 ? "+" : ""}{delta}pts
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </>
+      )}
 
       <h2>Why these recommendations?</h2>
       <ShapPlainExplanation
