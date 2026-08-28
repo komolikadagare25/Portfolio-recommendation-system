@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ShapPlainExplanation from "../../dashboard/widgets/RiskAssessment/ShapPlainExplanation";
 import LimePlainExplanation from "../../dashboard/widgets/RiskAssessment/LimePlainExplanation";
 import "./Recommendations.css";
+import BeginnerGuide from "../../dashboard/widgets/RiskAssessment/BeginnerGuide";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -136,6 +137,7 @@ export default function Recommendations() {
         topPositive={limeTopPositive}
         topNegative={limeTopNegative}
       />
+      <BeginnerGuide />
     </div>
   );
 }
