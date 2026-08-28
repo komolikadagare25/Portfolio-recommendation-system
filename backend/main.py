@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 import json
 
 from ml_bridge import run_full_pipeline
+from datetime import timezone
 
 from database import engine, Base, get_db
 import models
@@ -98,7 +99,7 @@ def list_reports(
     return [
         {
             "id": r.id,
-            "created_at": r.created_at.isoformat(),
+            "created_at": r.created_at.replace(tzinfo=timezone.utc).isoformat(),
             "risk_level": r.risk_level,
             "confidence": r.confidence,
         }
@@ -126,7 +127,7 @@ def get_report(
 def _report_to_out(report: models.Report) -> dict:
     return {
         "id": report.id,
-        "created_at": report.created_at.isoformat(),
+        "created_at": report.created_at.replace(tzinfo=timezone.utc).isoformat(),
         "risk_level": report.risk_level,
         "confidence": report.confidence,
         "questionnaire_input": json.loads(report.questionnaire_input),
