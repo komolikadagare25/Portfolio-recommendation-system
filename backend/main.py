@@ -14,6 +14,7 @@ from security import hash_password, verify_password, create_access_token, get_cu
 from fastapi.middleware.cors import CORSMiddleware
 from stock_prices import build_investment_plan
 from portfolio_history import build_portfolio_history
+from investment_reasoning import build_stock_reasoning, build_sector_reasoning
 
 Base.metadata.create_all(bind=engine)
 
@@ -176,6 +177,26 @@ def get_historical_performance(
         period=period,
         invested_amount=amount,
     )
+
+@app.get("/reports/{report_id}/investment-reasoning")
+def get_investment_reasoning(
+    report_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    report = (
+        db.query(models.Report)
+        .filter(models.Report.id == report_id, models.Report.user_id == current_user.id)
+        .first()
+    )
+    if report is None:
+        raise HTTPException(status_code=404, detail="Report not found")
+
+    portfolio_result = json.loads(report.portfolio_result)
+    return {
+        "sectors": build_sector_reasoning(portfolio_result["recommended_sectors"]),
+        "stocks": build_stock_reasoning(portfolio_result["recommended_stocks"]),
+    }
 
 
 def _report_to_out(report: models.Report) -> dict:

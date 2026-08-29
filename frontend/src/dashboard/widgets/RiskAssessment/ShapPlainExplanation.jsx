@@ -43,16 +43,16 @@ export default function ShapPlainExplanation({ predictedBand, topPositive, topNe
 
           <p>Because these factors pushed the prediction towards {predictedBand}:</p>
           <ul>
-            {topPositive.slice(0, 3).map((f) => (
+              {topPositive.slice(0, 3).map((f) => (
               <li key={f.feature}>
-                Your <strong>{humanize(f.feature)}</strong> answer strongly supported this outcome.
+                Your <strong>{humanize(f.feature)}</strong>{f.answer_value !== null && f.answer_value !== undefined ? ` (you answered: ${f.answer_value})` : ""} strongly supported this outcome.
               </li>
             ))}
           </ul>
 
           <p>While these factors pulled against it (but were outweighed):</p>
           <ul>
-            {topNegative.slice(0, 3).map((f) => (
+              {topNegative.slice(0, 3).map((f) => (
               <li key={f.feature}>
                 Your <strong>{humanize(f.feature)}</strong> answer slightly reduced the {predictedBand} score.
               </li>

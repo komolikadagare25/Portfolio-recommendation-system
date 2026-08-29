@@ -46,18 +46,18 @@ export default function LimePlainExplanation({ predictedBand, topPositive, topNe
 
           <p>Locally, these specific answers pushed the prediction towards {predictedBand}:</p>
           <ul>
-            {topPositive.slice(0, 3).map((f) => (
+              {topPositive.slice(0, 3).map((f) => (
               <li key={f.feature}>
-                <strong>{humanizeCondition(f.condition)}</strong> supported this outcome.
+                <strong>{humanizeCondition(f.condition)}</strong>{f.answer_value !== null && f.answer_value !== undefined ? ` (you answered: ${f.answer_value})` : ""} supported this outcome.
               </li>
             ))}
           </ul>
 
           <p>While these pulled against it (but were outweighed):</p>
           <ul>
-            {topNegative.slice(0, 3).map((f) => (
+              {topNegative.slice(0, 3).map((f) => (
               <li key={f.feature}>
-                <strong>{humanizeCondition(f.condition)}</strong> slightly reduced the {predictedBand} score.
+                <strong>{humanizeCondition(f.condition)}</strong>{f.answer_value !== null && f.answer_value !== undefined ? ` (you answered: ${f.answer_value})` : ""} slightly reduced the {predictedBand} score.
               </li>
             ))}
           </ul>

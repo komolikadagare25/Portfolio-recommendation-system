@@ -3,6 +3,7 @@ import ShapPlainExplanation from "../../dashboard/widgets/RiskAssessment/ShapPla
 import LimePlainExplanation from "../../dashboard/widgets/RiskAssessment/LimePlainExplanation";
 import "./Recommendations.css";
 import BeginnerGuide from "../../dashboard/widgets/RiskAssessment/BeginnerGuide";
+import InvestmentReasoning from "../../dashboard/widgets/RiskAssessment/InvestmentReasoning";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -64,6 +65,7 @@ export default function Recommendations() {
     feature: f.feature,
     condition: f.feature,
     weight: f.weight,
+    answer_value: f.answer_value,
   }));
   const limeTopPositive = limeFeatures.filter((f) => f.weight >= 0).sort((a, b) => b.weight - a.weight);
   const limeTopNegative = limeFeatures.filter((f) => f.weight < 0).sort((a, b) => a.weight - b.weight);
@@ -76,27 +78,21 @@ export default function Recommendations() {
         (confidence: {(parseFloat(report.confidence) * 100).toFixed(1)}%)
       </p>
 
-      <h2>Recommended Sectors</h2>
-      {portfolio_result.sector_selection_reasoning && (
-        <p style={{ color: "#666", fontSize: "0.9em" }}>{portfolio_result.sector_selection_reasoning}</p>
-      )}
-      <ul>
-        {portfolio_result.recommended_sectors.map((s) => (
-          <li key={s}>{s}</li>
-        ))}
-      </ul>
+        <InvestmentReasoning reportId={report.id} />
 
-      <h2>Recommended Stocks</h2>
-      {portfolio_result.stock_selection_reasoning && (
-        <p style={{ color: "#666", fontSize: "0.9em" }}>{portfolio_result.stock_selection_reasoning}</p>
-      )}
-      <ul>
-        {portfolio_result.recommended_stocks.map((s) => (
-          <li key={s}>{s}</li>
-        ))}
-      </ul>
+      <p style={{ marginTop: "16px" }}><em>{portfolio_result.investment_advice}</em></p>
 
-            <p><em>{portfolio_result.investment_advice}</em></p>
+      <details style={{ marginTop: "16px" }}>
+        <summary style={{ cursor: "pointer", color: "#666" }}>
+          Show the plain sector/stock lists
+        </summary>
+        <h3>Sectors</h3>
+        <ul>{portfolio_result.recommended_sectors.map((s) => <li key={s}>{s}</li>)}</ul>
+        <h3>Stocks</h3>
+        <ul>{portfolio_result.recommended_stocks.map((s) => <li key={s}>{s}</li>)}</ul>
+      </details>
+
+      
 
       {portfolio_result.personalization_explanation && (
         <>
@@ -132,7 +128,14 @@ export default function Recommendations() {
         </>
       )}
 
-      <h2>Why these recommendations?</h2>
+        <details style={{ marginTop: "24px" }}>
+        <summary style={{ cursor: "pointer", fontWeight: 600, fontSize: "1.1em" }}>
+          Want the technical detail behind your risk classification?
+        </summary>
+        <p style={{ color: "#666", fontSize: "0.9em" }}>
+          This explains how the AI arrived at your {risk_level} risk category —
+          a separate, earlier step from the sector/stock reasoning above.
+        </p>
       <ShapPlainExplanation
         predictedBand={risk_level}
         topPositive={shapTopPositive}
@@ -143,6 +146,7 @@ export default function Recommendations() {
         topPositive={limeTopPositive}
         topNegative={limeTopNegative}
       />
+      </details>
       <BeginnerGuide />
     </div>
   );

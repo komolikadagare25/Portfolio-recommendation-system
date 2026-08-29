@@ -22,6 +22,7 @@ export default function AIDecisionSummary({ report }) {
     feature: f.feature,
     condition: f.feature,
     weight: f.weight,
+    answer_value: f.answer_value,
   }));
   const limeTopPositive = limeFeatures.filter((f) => f.weight >= 0).sort((a, b) => b.weight - a.weight);
   const limeTopNegative = limeFeatures.filter((f) => f.weight < 0).sort((a, b) => a.weight - b.weight);

@@ -57,6 +57,31 @@ FIELD_NAME_MAP = {
     "Source": "source",
 }
 
+REVERSE_FIELD_NAME_MAP = {v: k for k, v in FIELD_NAME_MAP.items()}
+_KNOWN_MODEL_KEYS = sorted(FIELD_NAME_MAP.values(), key=len, reverse=True)
+
+
+def _extract_model_key(feature_text: str) -> str | None:
+    """LIME feature strings look like '3.00 < equity_market <= 4.00' —
+    this finds which known model field name is embedded in that string."""
+    for key in _KNOWN_MODEL_KEYS:
+        if key in feature_text:
+            return key
+    return None
+
+
+def _enrich_with_answer(features: list, questionnaire_answers: dict, is_lime: bool = False) -> list:
+    """Attaches the user's actual real answer to each SHAP/LIME feature,
+    so the explanation can say what they actually picked, not just an
+    abstract feature name."""
+    enriched = []
+    for f in features:
+        model_key = _extract_model_key(f["feature"]) if is_lime else f["feature"]
+        frontend_id = REVERSE_FIELD_NAME_MAP.get(model_key)
+        answer_value = questionnaire_answers.get(frontend_id) if frontend_id else None
+        enriched.append({**f, "answer_value": answer_value})
+    return enriched
+
 # Fallback only — used if a field is ever missing from the frontend payload.
 DEFAULT_FIELDS = {
     "mutual_funds": 4,
@@ -501,10 +526,10 @@ def run_full_pipeline(questionnaire_answers: dict) -> dict:
         "confidence": confidence,
         "portfolio": portfolio,
         "shap": {
-            "top_positive_features": shap_result["top_positive_features"],
-            "top_negative_features": shap_result["top_negative_features"],
+            "top_positive_features": _enrich_with_answer(shap_result["top_positive_features"], questionnaire_answers),
+            "top_negative_features": _enrich_with_answer(shap_result["top_negative_features"], questionnaire_answers),
         },
         "lime": {
-            "top_features": lime_result["top_features"],
+            "top_features": _enrich_with_answer(lime_result["top_features"], questionnaire_answers, is_lime=True),
         },
     }
