@@ -49,9 +49,16 @@ export default function AIDecisionSummary({ report }) {
         </div>
       )}
 
+            {portfolio_result?.sector_selection_reasoning && (
+        <div>
+          <h3>3. Why these sectors?</h3>
+          <p>{portfolio_result.sector_selection_reasoning}</p>
+        </div>
+      )}
+
       {portfolio_result?.stock_selection_reasoning && (
         <div>
-          <h3>3. Why these specific stocks?</h3>
+          <h3>4. Why these specific stocks?</h3>
           <p>{portfolio_result.stock_selection_reasoning}</p>
         </div>
       )}

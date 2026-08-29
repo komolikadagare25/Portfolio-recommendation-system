@@ -77,6 +77,9 @@ export default function Recommendations() {
       </p>
 
       <h2>Recommended Sectors</h2>
+      {portfolio_result.sector_selection_reasoning && (
+        <p style={{ color: "#666", fontSize: "0.9em" }}>{portfolio_result.sector_selection_reasoning}</p>
+      )}
       <ul>
         {portfolio_result.recommended_sectors.map((s) => (
           <li key={s}>{s}</li>

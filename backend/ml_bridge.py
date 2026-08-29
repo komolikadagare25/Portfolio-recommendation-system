@@ -296,6 +296,57 @@ def compute_growth_score(model_input: dict) -> float:
     ]
     return sum(scores) / len(scores)
 
+# Reasonable growth/stability tagging for sectors — same axis as STOCK_TYPE_MAP.
+SECTOR_TYPE_MAP = {
+    "Banking": "stable", "FMCG": "stable", "Utilities": "stable",
+    "Pharmaceuticals": "stable", "IT": "stable",
+    "Technology": "growth", "Renewable Energy": "growth",
+    "AI": "growth", "Mid-cap Growth": "growth",
+}
+
+# One swappable sector slot per risk band: the default sector is swapped
+# for the alternative when the user's growth_score clearly leans the
+# opposite direction from the band's natural tilt — so even users in the
+# same risk band can see a different sector line-up.
+SECTOR_SWAP_SLOT = {
+    "Conservative": {"default": "Utilities", "alt": "Technology", "alt_when": "growth"},
+    "Moderate": {"default": "Pharmaceuticals", "alt": "Renewable Energy", "alt_when": "growth"},
+    "Aggressive": {"default": "Mid-cap Growth", "alt": "Banking", "alt_when": "stable"},
+}
+
+
+def personalize_sectors(portfolio: dict, risk_level: str, growth_score: float) -> dict:
+    """Swaps one sector in the band template for an alternative when the
+    user's growth_score clearly diverges from the band's natural tilt —
+    e.g. an Aggressive user with a more moderate growth_score sees Banking
+    swapped in for Mid-cap Growth."""
+    slot = SECTOR_SWAP_SLOT.get(risk_level)
+    sectors = list(portfolio["recommended_sectors"])
+
+    if not slot or slot["default"] not in sectors:
+        portfolio["sector_selection_reasoning"] = None
+        return portfolio
+
+    leans_growth = growth_score >= 0.6
+    leans_stable = growth_score <= 0.4
+    should_swap = (slot["alt_when"] == "growth" and leans_growth) or (
+        slot["alt_when"] == "stable" and leans_stable
+    )
+
+    if should_swap:
+        idx = sectors.index(slot["default"])
+        sectors[idx] = slot["alt"]
+        portfolio["recommended_sectors"] = sectors
+        portfolio["sector_selection_reasoning"] = (
+            f"Your answers leaned more {'growth-oriented' if slot['alt_when'] == 'growth' else 'stability-focused'} "
+            f"than the typical {risk_level} investor, so we swapped {slot['default']} for {slot['alt']} "
+            f"in your recommended sectors."
+        )
+    else:
+        portfolio["sector_selection_reasoning"] = None
+
+    return portfolio
+
 
 def personalize_stock_selection(portfolio: dict, model_input: dict) -> dict:
     """Replaces the band-templated stock list with a per-user selection —
@@ -371,6 +422,8 @@ def run_full_pipeline(questionnaire_answers: dict) -> dict:
         "label": "Your stated slider preferences",
         "changes": _diff_allocation(before, after),
     })
+    growth_score = compute_growth_score(model_input)
+    portfolio = personalize_sectors(portfolio, risk_level, growth_score)
     portfolio = personalize_stock_selection(portfolio, model_input)
 
     personalization_explanation = build_personalization_explanation(
