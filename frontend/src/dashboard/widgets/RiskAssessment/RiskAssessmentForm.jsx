@@ -156,6 +156,7 @@ export default function RiskAssessmentForm({ onSubmitAnswers, onComplete }) {
           portfolio={resultProps.portfolio}
           shap={resultProps.shap}
           lime={resultProps.lime}
+          report={report}
         />
       );
     }

@@ -138,15 +138,15 @@ RECOMMENDED_SECTORS: Dict[str, List[str]] = {
 #: intentionally kept as static configuration data (no hardcoding inside
 #: functions), so it can later be swapped for a database-backed lookup.
 SECTOR_STOCK_MAP: Dict[str, List[str]] = {
-    "IT": ["TCS", "Infosys", "Wipro"],
-    "Banking": ["HDFC Bank", "ICICI Bank", "SBI"],
-    "Pharmaceuticals": ["Sun Pharma", "Cipla", "Dr. Reddy's"],
-    "FMCG": ["ITC", "Hindustan Unilever", "Nestle India"],
-    "Utilities": ["NTPC", "Power Grid"],
-    "Technology": ["TCS", "Infosys", "LTIMindtree"],
-    "Renewable Energy": ["Tata Power", "Adani Green", "Suzlon"],
-    "AI": ["Tata Elxsi", "Persistent Systems"],
-    "Mid-cap Growth": ["Dixon Technologies", "Polycab", "Astral"],
+    "IT": ["TCS", "Infosys", "Wipro", "HCL Technologies", "Tech Mahindra"],
+    "Banking": ["HDFC Bank", "ICICI Bank", "SBI", "Kotak Mahindra Bank", "Axis Bank"],
+    "Pharmaceuticals": ["Sun Pharma", "Cipla", "Dr. Reddy's", "Divi's Laboratories", "Lupin"],
+    "FMCG": ["ITC", "Hindustan Unilever", "Nestle India", "Britannia Industries", "Dabur India"],
+    "Utilities": ["NTPC", "Power Grid", "NHPC", "Adani Power"],
+    "Technology": ["TCS", "Infosys", "LTIMindtree", "Coforge", "KPIT Technologies"],
+    "Renewable Energy": ["Tata Power", "Adani Green", "Suzlon", "JSW Energy"],
+    "AI": ["Tata Elxsi", "Persistent Systems", "Coforge", "KPIT Technologies"],
+    "Mid-cap Growth": ["Dixon Technologies", "Polycab", "Astral", "Trent", "Kaynes Technology"],
 }
 
 #: Maximum number of stock recommendations returned to the caller.

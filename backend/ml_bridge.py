@@ -19,12 +19,13 @@ the final result is traceable back to real inputs, not a black box.
 import sys
 from pathlib import Path
 
+
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from ml.investor.src.predict_investor_risk import predict_investor_risk
-from ml.portfolio.src.portfolio_recommender import generate_portfolio
+from ml.portfolio.src.portfolio_recommender import generate_portfolio, SECTOR_STOCK_MAP, MAX_RECOMMENDED_STOCKS
 from ml.explainability.src.shap_explainer import generate_shap_explanation
 from ml.explainability.src.lime_explainer import generate_lime_explanation
 
@@ -252,6 +253,90 @@ def build_personalization_explanation(
         "summary": summary,
     }
 
+# --------------------------------------------------------------------------- #
+# Stock selection personalization — WHICH stocks get shown, not just %.
+# --------------------------------------------------------------------------- #
+
+# Reasonable growth/stability tagging based on company profile (larger,
+# established = "stable"; smaller/newer/higher-growth = "growth"). This is
+# our own categorization for selection purposes, not derived from live
+# volatility data.
+STOCK_TYPE_MAP = {
+    "TCS": "stable", "Infosys": "stable", "Wipro": "stable",
+    "HCL Technologies": "stable", "Tech Mahindra": "stable",
+    "HDFC Bank": "stable", "ICICI Bank": "stable", "SBI": "stable",
+    "Kotak Mahindra Bank": "stable", "Axis Bank": "stable",
+    "Sun Pharma": "stable", "Cipla": "stable", "Dr. Reddy's": "stable",
+    "Divi's Laboratories": "stable", "Lupin": "stable",
+    "ITC": "stable", "Hindustan Unilever": "stable", "Nestle India": "stable",
+    "Britannia Industries": "stable", "Dabur India": "stable",
+    "NTPC": "stable", "Power Grid": "stable", "NHPC": "stable",
+    "LTIMindtree": "growth", "Tata Power": "growth", "Adani Green": "growth",
+    "Suzlon": "growth", "Tata Elxsi": "growth", "Persistent Systems": "growth",
+    "Dixon Technologies": "growth", "Polycab": "growth", "Astral": "growth",
+    "Adani Power": "growth", "Coforge": "growth", "KPIT Technologies": "growth",
+    "JSW Energy": "growth", "Trent": "growth", "Kaynes Technology": "growth",
+}
+
+EXPECT_SCORE = {"10%-20%": 0.2, "20%-30%": 0.5, "30%-40%": 0.8}
+PURPOSE_SCORE = {"Savings For Future": 0.2, "Returns": 0.5, "Wealth Creation": 0.7}
+MONITOR_SCORE = {"Monthly": 0.2, "Weekly": 0.5, "Daily": 0.8}
+REASON_EQUITY_SCORE = {"Dividend": 0.2, "Liquidity": 0.4, "Capital Appreciation": 0.8}
+
+
+def compute_growth_score(model_input: dict) -> float:
+    """A 0-1 score from real per-user signals (return appetite, purpose,
+    monitoring frequency, reason for equity) — higher means the user's own
+    stated preferences lean toward growth over stability."""
+    scores = [
+        EXPECT_SCORE.get(model_input.get("expect"), 0.5),
+        PURPOSE_SCORE.get(model_input.get("purpose"), 0.5),
+        MONITOR_SCORE.get(model_input.get("invest_monitor"), 0.5),
+        REASON_EQUITY_SCORE.get(model_input.get("reason_equity"), 0.5),
+    ]
+    return sum(scores) / len(scores)
+
+
+def personalize_stock_selection(portfolio: dict, model_input: dict) -> dict:
+    """Replaces the band-templated stock list with a per-user selection —
+    same sectors, but which specific stock is picked from each sector is
+    ordered by the user's own growth_score, so two users in the same risk
+    band with different answers see different stock names."""
+    growth_score = compute_growth_score(model_input)
+    preferred_type = "growth" if growth_score >= 0.5 else "stable"
+
+    sectors = portfolio["recommended_sectors"]
+    per_sector_candidates = []
+    for sector in sectors:
+        candidates = list(SECTOR_STOCK_MAP.get(sector, []))
+        candidates.sort(key=lambda s: STOCK_TYPE_MAP.get(s, "stable") != preferred_type)
+        per_sector_candidates.append(candidates)
+
+    selected = []
+    seen = set()
+    round_index = 0
+    while len(selected) < MAX_RECOMMENDED_STOCKS and any(
+        round_index < len(c) for c in per_sector_candidates
+    ):
+        for candidates in per_sector_candidates:
+            if round_index < len(candidates):
+                stock = candidates[round_index]
+                if stock not in seen:
+                    selected.append(stock)
+                    seen.add(stock)
+                    if len(selected) >= MAX_RECOMMENDED_STOCKS:
+                        break
+        round_index += 1
+
+    portfolio["recommended_stocks"] = selected
+    portfolio["stock_selection_reasoning"] = (
+        f"Based on your stated return expectations, investment purpose, "
+        f"monitoring frequency, and reason for choosing equities, we leaned "
+        f"toward {'growth-oriented' if preferred_type == 'growth' else 'stable, established'} "
+        f"picks within your recommended sectors."
+    )
+    return portfolio
+
 
 # --------------------------------------------------------------------------- #
 # Public entry point
@@ -286,6 +371,7 @@ def run_full_pipeline(questionnaire_answers: dict) -> dict:
         "label": "Your stated slider preferences",
         "changes": _diff_allocation(before, after),
     })
+    portfolio = personalize_stock_selection(portfolio, model_input)
 
     personalization_explanation = build_personalization_explanation(
         base_allocation, portfolio["asset_allocation"], step_diffs, model_input

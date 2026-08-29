@@ -84,6 +84,9 @@ export default function Recommendations() {
       </ul>
 
       <h2>Recommended Stocks</h2>
+      {portfolio_result.stock_selection_reasoning && (
+        <p style={{ color: "#666", fontSize: "0.9em" }}>{portfolio_result.stock_selection_reasoning}</p>
+      )}
       <ul>
         {portfolio_result.recommended_stocks.map((s) => (
           <li key={s}>{s}</li>

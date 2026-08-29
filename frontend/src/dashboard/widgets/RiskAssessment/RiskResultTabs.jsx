@@ -8,6 +8,7 @@ import { predictionResult, portfolioRecommendation } from "../../../data/predict
 import { shapExplanation } from "../../../data/shapMock";
 import { limeExplanation } from "../../../data/limeMock";
 import "./RiskResultTabs.css";
+import AIDecisionSummary from "./AIDecisionSummary";
 
 const TABS = ["Prediction & Portfolio", "SHAP", "LIME", "AI Decision Summary"];
 
@@ -25,7 +26,7 @@ const TABS = ["Prediction & Portfolio", "SHAP", "LIME", "AI Decision Summary"];
  * api/riskAssessment.js). If a prop is omitted, this falls back to the
  * bundled mock so the component still renders standalone during development.
  */
-export default function RiskResultTabs({ onContinue, prediction, portfolio, shap, lime }) {
+export default function RiskResultTabs({ onContinue, prediction, portfolio, shap, lime, report }) {
   const [activeTab, setActiveTab] = useState("Prediction & Portfolio");
 
   const predictionData = prediction ?? predictionResult;
@@ -59,13 +60,7 @@ export default function RiskResultTabs({ onContinue, prediction, portfolio, shap
 
         {activeTab === "LIME" && <LimeExplanationPanel explanation={limeData} />}
 
-        {activeTab === "AI Decision Summary" && (
-          <div className="risk-result-tabs__placeholder">
-            {activeTab} isn't wired up yet — share that output the same way you
-            did for SHAP, LIME, and Prediction & Portfolio, and I'll build this
-            tab too.
-          </div>
-        )}
+        {activeTab === "AI Decision Summary" && <AIDecisionSummary report={report} />}
       </div>
 
       {onContinue && (

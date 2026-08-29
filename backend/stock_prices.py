@@ -31,6 +31,21 @@ STOCK_TICKER_MAP = {
     "Dixon Technologies": "DIXON.NS",
     "Polycab": "POLYCAB.NS",
     "Astral": "ASTRAL.NS",
+    "HCL Technologies": "HCLTECH.NS",
+    "Tech Mahindra": "TECHM.NS",
+    "Kotak Mahindra Bank": "KOTAKBANK.NS",
+    "Axis Bank": "AXISBANK.NS",
+    "Divi's Laboratories": "DIVISLAB.NS",
+    "Lupin": "LUPIN.NS",
+    "Britannia Industries": "BRITANNIA.NS",
+    "Dabur India": "DABUR.NS",
+    "NHPC": "NHPC.NS",
+    "Adani Power": "ADANIPOWER.NS",
+    "Coforge": "COFORGE.NS",
+    "KPIT Technologies": "KPITTECH.NS",
+    "JSW Energy": "JSWENERGY.NS",
+    "Trent": "TRENT.NS",
+    "Kaynes Technology": "KAYNES.NS",
 }
 
 
