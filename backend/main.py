@@ -13,6 +13,7 @@ import schemas
 from security import hash_password, verify_password, create_access_token, get_current_user
 from fastapi.middleware.cors import CORSMiddleware
 from stock_prices import build_investment_plan
+from portfolio_history import build_portfolio_history
 
 Base.metadata.create_all(bind=engine)
 
@@ -150,6 +151,31 @@ def create_investment_plan(
         category_guidance=portfolio_result.get("category_guidance"),
     )
     return plan
+
+
+@app.get("/reports/{report_id}/historical-performance")
+def get_historical_performance(
+    report_id: int,
+    period: str = "1y",
+    amount: float = 10000.0,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    report = (
+        db.query(models.Report)
+        .filter(models.Report.id == report_id, models.Report.user_id == current_user.id)
+        .first()
+    )
+    if report is None:
+        raise HTTPException(status_code=404, detail="Report not found")
+
+    portfolio_result = json.loads(report.portfolio_result)
+    return build_portfolio_history(
+        asset_allocation=portfolio_result["asset_allocation"],
+        recommended_stocks=portfolio_result["recommended_stocks"],
+        period=period,
+        invested_amount=amount,
+    )
 
 
 def _report_to_out(report: models.Report) -> dict:

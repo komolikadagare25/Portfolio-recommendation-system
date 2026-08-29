@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ClipboardList, ArrowRight } from "lucide-react";
 import "./MyPortfolio.css";
+import HistoricalPerformanceChart from "../../dashboard/widgets/DashboardHome/HistoricalPerformanceChart";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -133,7 +134,11 @@ export default function MyPortfolio() {
         ))}
       </ul>
 
-            <p><em>{portfolio_result.investment_advice}</em></p>
+      <p><em>{portfolio_result.investment_advice}</em></p>
+
+      <h2>Historical Performance</h2>
+      <h2>Historical Performance</h2>
+      <HistoricalPerformanceChart reportId={report.id} amount={plan ? plan.total_amount : 10000} riskLevel={report.risk_level}/>
 
       <h2>Build Your Portfolio</h2>
       <p>Enter an amount to see exactly how many shares of each recommended stock you could buy today, at live market prices.</p>
