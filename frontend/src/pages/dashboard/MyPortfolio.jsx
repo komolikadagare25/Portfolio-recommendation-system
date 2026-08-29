@@ -159,10 +159,15 @@ export default function MyPortfolio() {
 
       {plan && (
         <div style={{ border: "1px solid #ddd", borderRadius: "8px", padding: "16px" }}>
-          <h3>Category Breakdown</h3>
-          <ul>
-            {Object.entries(plan.category_amounts).map(([k, v]) => (
-              <li key={k}>{k}: ₹{v.toLocaleString()}</li>
+                    <h3>Category Breakdown</h3>
+          <ul style={{ listStyle: "none", padding: 0 }}>
+            {plan.category_breakdown.map((c) => (
+              <li key={c.category} style={{ marginBottom: "10px" }}>
+                <strong>{c.category}: ₹{c.amount.toLocaleString()}</strong>
+                {c.guidance && (
+                  <p style={{ margin: "2px 0 0", fontSize: "0.85em", color: "#666" }}>{c.guidance}</p>
+                )}
+              </li>
             ))}
           </ul>
 

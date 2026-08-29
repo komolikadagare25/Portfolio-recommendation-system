@@ -147,6 +147,7 @@ def create_investment_plan(
         total_amount=payload.amount,
         asset_allocation=portfolio_result["asset_allocation"],
         recommended_stocks=portfolio_result["recommended_stocks"],
+        category_guidance=portfolio_result.get("category_guidance"),
     )
     return plan
 

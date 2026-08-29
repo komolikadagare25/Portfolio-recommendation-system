@@ -388,6 +388,67 @@ def personalize_stock_selection(portfolio: dict, model_input: dict) -> dict:
     )
     return portfolio
 
+def build_category_guidance(model_input: dict, growth_score: float) -> dict:
+    """Personalized, per-user guidance for the non-stock allocation
+    categories — grounded in real signals (Duration, Invest_Monitor,
+    growth_score), not a generic one-size-fits-all message."""
+    duration = model_input.get("duration")
+    monitor = model_input.get("invest_monitor")
+
+    if growth_score >= 0.6:
+        mutual_funds = (
+            "Consider a Nifty 50 index fund (UTI or Navi Nifty 50, ~0.06-0.2% expense ratio) "
+            "as your core holding, plus a Nifty Next 50 index fund (e.g. HDFC Nifty Next 50) for "
+            "extra growth tilt, matching your growth-leaning answers."
+        )
+    else:
+        mutual_funds = (
+            "Consider a pure Nifty 50 index fund — UTI Nifty 50 Index Fund is well-established, "
+            "Navi Nifty 50 Index Fund has one of the lowest expense ratios (~0.06%). All Nifty 50 "
+            "index funds hold the same 50 stocks in the same weights, so cost matters more than brand."
+        )
+
+    if duration == "More Than 5 Years":
+        gold = (
+            "With your 5+ year horizon, consider a Sovereign Gold Bond (SGB) — issued by RBI, "
+            "tax-free if held to maturity (8 years), better suited to a long hold than an ETF."
+        )
+    elif monitor == "Daily":
+        gold = (
+            "Since you check investments daily, a liquid Gold ETF (Nippon India Gold BeES: "
+            "GOLDBEES, or SBI Gold ETF: SETFGOLD) suits you better than an SGB, since ETFs trade "
+            "freely on the exchange any market day."
+        )
+    else:
+        gold = (
+            "Consider Nippon India ETF Gold BeES (GOLDBEES) or SBI Gold ETF (SETFGOLD) — liquid, "
+            "established gold ETFs on the NSE that track physical gold without needing storage."
+        )
+
+    if duration in ("Less Than 1 Year", "1-3 Years"):
+        govt_bonds = (
+            f"Given your {duration.lower()} horizon, look for shorter-tenure government securities "
+            "or treasury bills via RBI Retail Direct (rbiretaildirect.org.in) rather than long-dated bonds."
+        )
+    else:
+        govt_bonds = (
+            f"Given your {duration.lower() if duration else 'longer'} horizon, longer-tenure "
+            "government securities via RBI Retail Direct (rbiretaildirect.org.in) can lock in "
+            "current yields for longer."
+        )
+
+    fixed_deposits = (
+        f"Look for an FD with a tenure close to your {duration.lower() if duration else 'stated'} "
+        "horizon for the best matching rate — compare 2-3 banks first, since rates vary and change over time."
+    )
+
+    return {
+        "Mutual Funds": mutual_funds,
+        "Government Bonds": govt_bonds,
+        "Fixed Deposits": fixed_deposits,
+        "Gold": gold,
+    }
+
 
 # --------------------------------------------------------------------------- #
 # Public entry point
@@ -425,6 +486,7 @@ def run_full_pipeline(questionnaire_answers: dict) -> dict:
     growth_score = compute_growth_score(model_input)
     portfolio = personalize_sectors(portfolio, risk_level, growth_score)
     portfolio = personalize_stock_selection(portfolio, model_input)
+    portfolio["category_guidance"] = build_category_guidance(model_input, growth_score)
 
     personalization_explanation = build_personalization_explanation(
         base_allocation, portfolio["asset_allocation"], step_diffs, model_input

@@ -48,6 +48,16 @@ STOCK_TICKER_MAP = {
     "Kaynes Technology": "KAYNES.NS",
 }
 
+# Fallback only — used when a report has no personalized category_guidance
+# (e.g. older reports created before this feature existed). Real
+# personalized guidance is built per-user in ml_bridge.build_category_guidance.
+DEFAULT_CATEGORY_GUIDANCE = {
+    "Mutual Funds": "Consider a low-cost Nifty 50 index fund — UTI Nifty 50 Index Fund and Navi Nifty 50 Index Fund are well-established, low-cost options.",
+    "Government Bonds": "Use RBI Retail Direct (rbiretaildirect.org.in) — the government's own official platform for buying government securities directly.",
+    "Fixed Deposits": "Open an FD through your existing bank's app or branch — compare 2-3 current offers before committing.",
+    "Gold": "Consider Nippon India ETF Gold BeES (GOLDBEES) or SBI Gold ETF (SETFGOLD) — liquid, established gold ETFs on the NSE.",
+}
+
 
 def get_live_price(stock_name: str) -> float | None:
     """Returns the latest closing price for a stock, or None if it can't
@@ -64,10 +74,17 @@ def get_live_price(stock_name: str) -> float | None:
         return None
 
 
-def build_investment_plan(total_amount: float, asset_allocation: dict, recommended_stocks: list) -> dict:
+def build_investment_plan(
+    total_amount: float,
+    asset_allocation: dict,
+    recommended_stocks: list,
+    category_guidance: dict = None,
+) -> dict:
     """Splits total_amount across asset categories per asset_allocation
     percentages, then breaks the Stocks category down into equal-weighted
-    share purchases using live prices."""
+    share purchases using live prices. category_guidance, when provided,
+    is the per-user personalized guidance built in ml_bridge.py; falls
+    back to DEFAULT_CATEGORY_GUIDANCE for older reports that don't have it."""
     category_amounts = {
         category: round(total_amount * pct / 100, 2)
         for category, pct in asset_allocation.items()
@@ -106,8 +123,19 @@ def build_investment_plan(total_amount: float, asset_allocation: dict, recommend
                 "error": None,
             })
 
+    guidance_source = category_guidance or DEFAULT_CATEGORY_GUIDANCE
+    category_breakdown = [
+        {
+            "category": category,
+            "amount": amount,
+            "guidance": guidance_source.get(category),
+        }
+        for category, amount in category_amounts.items()
+    ]
+
     return {
         "total_amount": total_amount,
         "category_amounts": category_amounts,
+        "category_breakdown": category_breakdown,
         "stock_plan": stock_plan,
     }
