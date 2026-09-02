@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
+import CollapsibleSection from "./CollapsibleSection";
+import "./BeginnerGuide.css";
 
 const STEPS = [
   {
@@ -32,52 +34,34 @@ const GLOSSARY = [
 ];
 
 export default function BeginnerGuide() {
-  const [open, setOpen] = useState(false);
-
   return (
-    <div style={{ border: "1px solid #ddd", borderRadius: "8px", padding: "16px", marginTop: "16px" }}>
-      <button
-        onClick={() => setOpen(!open)}
-        style={{
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          fontWeight: 700,
-          fontSize: "1.1em",
-          padding: 0,
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-        }}
-      >
-        {open ? "▾" : "▸"} New to investing? Here's how to actually get started
-      </button>
+    <CollapsibleSection title="New to investing? Here's how to actually get started" defaultOpen={false}>
+      <div className="beginner-guide">
+        <p className="beginner-guide__disclaimer">
+          This is general educational information, not professional financial advice.
+          Markets carry risk — only invest money you can afford to have tied up.
+        </p>
 
-      {open && (
-        <div style={{ marginTop: "16px" }}>
-          <p style={{ color: "#666", fontSize: "0.9em" }}>
-            This is general educational information, not professional financial advice.
-            Markets carry risk — only invest money you can afford to have tied up.
-          </p>
-
-          <h3>Steps to build the portfolio shown above</h3>
+        <h3 className="beginner-guide__subheading">Steps to build the portfolio shown above</h3>
+        <ol className="beginner-guide__steps">
           {STEPS.map((step) => (
-            <div key={step.title} style={{ marginBottom: "12px" }}>
+            <li key={step.title} className="beginner-guide__step">
               <strong>{step.title}</strong>
-              <p style={{ margin: "4px 0 0" }}>{step.body}</p>
+              <p>{step.body}</p>
+            </li>
+          ))}
+        </ol>
+
+        <h3 className="beginner-guide__subheading">Quick glossary</h3>
+        <dl className="beginner-guide__glossary">
+          {GLOSSARY.map((g) => (
+            <div key={g.term} className="beginner-guide__glossary-row">
+              <dt>{g.term}</dt>
+              <dd>{g.def}</dd>
             </div>
           ))}
-
-          <h3>Quick glossary</h3>
-          <ul>
-            {GLOSSARY.map((g) => (
-              <li key={g.term} style={{ marginBottom: "6px" }}>
-                <strong>{g.term}:</strong> {g.def}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
+        </dl>
+      </div>
+    </CollapsibleSection>
   );
 }

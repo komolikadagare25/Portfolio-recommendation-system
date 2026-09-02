@@ -3,6 +3,15 @@
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 18px 20px;
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), border-color var(--dur-fast) ease;
+  animation: dsb-rise-in var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--dsb-stagger, 0) * 60ms);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  border-color: #d7dbe2;
 }
 
 .stat-card__label {
@@ -19,14 +28,25 @@
   font-weight: 600;
   color: var(--text);
   margin: 0 0 6px;
+  transition: color var(--dur-fast) ease;
 }
+
+/* The headline number itself picks up the risk/gain color, not just the
+   small caption underneath — makes "risky" vs "safe" amounts obvious at
+   a glance without having to read the caption text. */
+.stat-card__value--up { color: var(--success-strong); }
+.stat-card__value--down { color: var(--danger); }
+.stat-card__value--warn { color: var(--warning); }
+.stat-card__value--neutral { color: var(--text); }
+.stat-card__value--info { color: var(--indigo); }
 
 .stat-card__caption {
   font-size: 12px;
   margin: 0;
 }
 
-.stat-card__caption--up { color: var(--teal); }
-.stat-card__caption--down { color: #f87171; }
-.stat-card__caption--warn { color: #f59e0b; }
+.stat-card__caption--up { color: var(--success); }
+.stat-card__caption--down { color: var(--danger); }
+.stat-card__caption--warn { color: var(--warning); }
 .stat-card__caption--neutral { color: var(--muted); }
+.stat-card__caption--info { color: var(--indigo); }

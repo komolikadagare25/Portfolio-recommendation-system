@@ -12,6 +12,12 @@
   grid-template-columns: 110px 1fr 52px;
   align-items: center;
   gap: 12px;
+  animation: dsb-rise-in var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--dsb-stagger, 0) * 60ms);
+}
+
+@media (max-width: 480px) {
+  .shap-list__row { grid-template-columns: 84px 1fr 44px; gap: 8px; }
 }
 
 .shap-list__name {
@@ -32,10 +38,20 @@
   display: block;
   height: 100%;
   border-radius: 4px;
+  width: 0;
+  animation: dsb-bar-grow 600ms var(--ease-out) forwards;
+  animation-delay: calc(var(--dsb-stagger, 0) * 60ms + 150ms);
 }
 
-.shap-list__bar--pos { background: var(--indigo); }
-.shap-list__bar--neg { background: var(--teal); }
+@keyframes dsb-bar-grow {
+  from { width: 0; }
+  to { width: var(--dsb-bar-width, 0%); }
+}
+
+/* Positive SHAP contribution pushes risk up -> red. Negative pulls it
+   down -> green. Mirrors the red/green amount language used elsewhere. */
+.shap-list__bar--pos { background: var(--danger); }
+.shap-list__bar--neg { background: var(--success); }
 
 .shap-list__value {
   font-family: var(--font-mono);
@@ -43,5 +59,5 @@
   text-align: right;
 }
 
-.shap-list__value--pos { color: var(--indigo); }
-.shap-list__value--neg { color: var(--teal); }
+.shap-list__value--pos { color: var(--danger); }
+.shap-list__value--neg { color: var(--success-strong); }

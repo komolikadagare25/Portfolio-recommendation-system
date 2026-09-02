@@ -28,7 +28,7 @@ const FOOTER_ITEMS = [
   { label: "Help", to: "/dashboard/help", icon: HelpCircle },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ onNavigate }) {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
 
@@ -47,12 +47,14 @@ export default function Sidebar() {
         Portfolio<span className="dsb-sidebar__brand-accent">IQ</span>
       </div>
 
-      <nav className="dsb-sidebar__nav">
-        {NAV_ITEMS.map((item) => (
+      <nav className="dsb-sidebar__nav" aria-label="Primary">
+        {NAV_ITEMS.map((item, i) => (
           <NavLink
             key={item.to}
             to={item.to}
             end={item.end}
+            onClick={onNavigate}
+            style={{ "--dsb-stagger": i }}
             className={({ isActive }) => `dsb-sidebar__link ${isActive ? "dsb-sidebar__link--active" : ""}`}
           >
             <item.icon size={17} strokeWidth={1.75} />
@@ -61,11 +63,12 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="dsb-sidebar__footer-nav">
+      <div className="dsb-sidebar__footer-nav" aria-label="Secondary">
         {FOOTER_ITEMS.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
+            onClick={onNavigate}
             className={({ isActive }) => `dsb-sidebar__link ${isActive ? "dsb-sidebar__link--active" : ""}`}
           >
             <item.icon size={17} strokeWidth={1.75} />
@@ -80,7 +83,7 @@ export default function Sidebar() {
           <p className="dsb-sidebar__user-name">{user?.name || "User"}</p>
           <p className="dsb-sidebar__user-role">Retail Investor</p>
         </div>
-        <button onClick={handleLogout} className="dsb-sidebar__link" style={{ marginLeft: "auto" }}>
+        <button onClick={handleLogout} className="dsb-sidebar__link dsb-sidebar__logout" aria-label="Log out" title="Log out">
           <LogOut size={17} strokeWidth={1.75} />
         </button>
       </div>

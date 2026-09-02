@@ -1,3 +1,7 @@
+.prediction-result {
+  animation: dsb-rise-in var(--dur-slow) var(--ease-out) both;
+}
+
 .prediction-result__header {
   display: flex;
   align-items: center;
@@ -33,7 +37,14 @@
   font-weight: 600;
   color: var(--text);
   margin: 0;
+  transition: color var(--dur-fast) ease;
 }
+
+/* Risk-level readout picks up the same red/amber/green language used
+   everywhere else on the dashboard for "how risky is this". */
+.prediction-result__stat-value--low { color: var(--success-strong); }
+.prediction-result__stat-value--medium { color: var(--warning); }
+.prediction-result__stat-value--high { color: var(--danger); }
 
 .prediction-result__complete-badge {
   display: flex;
@@ -42,10 +53,12 @@
   margin-left: auto;
   padding: 8px 16px;
   border-radius: 8px;
-  background: var(--teal-soft);
-  color: var(--teal);
+  background: var(--success-soft);
+  color: var(--success-strong);
   font-size: 13px;
   font-weight: 500;
+  animation: dsb-scale-in var(--dur-base) var(--ease-out) both;
+  animation-delay: 200ms;
 }
 
 .prediction-result__description-banner {

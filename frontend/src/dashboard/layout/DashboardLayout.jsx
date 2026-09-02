@@ -1,29 +1,39 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import "./DashboardLayout.css";
-import RiskProfileBanner from "../widgets/DashboardHome/RiskProfileBanner";
-import StatCard from "../widgets/DashboardHome/StatCard";
-import AllocationDonut from "../widgets/DashboardHome/AllocationDonut";
-import ShapeFeatureImportance from "../widgets/DashboardHome/ShapFeatureImportance";
-import RecommendedStocks from "../widgets/DashboardHome/RecommendedStocksTable";
 
 /**
  * Wraps every /dashboard/* route. The matched child page renders via <Outlet />.
  */
 export default function DashboardLayout() {
+  const [navOpen, setNavOpen] = useState(false);
+  const location = useLocation();
+
+  // Close the mobile drawer automatically whenever the route changes.
+  useEffect(() => {
+    setNavOpen(false);
+  }, [location.pathname]);
+
   return (
-    <div className="dsb-shell">
-      <Sidebar />
+    <div className={`dsb-shell ${navOpen ? "dsb-shell--nav-open" : ""}`}>
+      <Sidebar onNavigate={() => setNavOpen(false)} />
+      <div
+        className="dsb-sidebar__scrim"
+        onClick={() => setNavOpen(false)}
+        aria-hidden={!navOpen}
+      />
 
       <div className="dsb-main">
-        <Topbar />
+        <Topbar onToggleNav={() => setNavOpen((v) => !v)} navOpen={navOpen} />
 
         <div className="dsb-main__content">
-
-          <Outlet />
-
+          {/* key forces a remount on route change, which re-triggers the
+              fade/rise-in animation so every page feels alive, not static. */}
+          <div className="dsb-page-transition" key={location.pathname}>
+            <Outlet />
+          </div>
         </div>
       </div>
     </div>

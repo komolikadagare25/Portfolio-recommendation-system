@@ -16,7 +16,34 @@ const RISK_COLORS = {
   High: "danger",
 };
 
-export default function RecommendedStocksTable({ stocks }) {
+export default function RecommendedStocksTable({ stocks, isLoading = false }) {
+  if (isLoading) {
+    return (
+      <table className="stock-table">
+        <thead>
+          <tr>
+            <th>Stock</th>
+            <th>Sector</th>
+            <th>Weight</th>
+            <th>Exp. Return</th>
+            <th>Risk</th>
+          </tr>
+        </thead>
+        <tbody>
+          {[0, 1, 2, 3].map((i) => (
+            <tr key={i}>
+              <td><span className="dsb-skeleton" style={{ width: "90px", height: "12px", marginBottom: "6px" }} /><span className="dsb-skeleton" style={{ width: "60%", height: "10px" }} /></td>
+              <td><span className="dsb-skeleton" style={{ width: "70px", height: "20px", borderRadius: "6px" }} /></td>
+              <td><span className="dsb-skeleton" style={{ width: "100%", height: "10px" }} /></td>
+              <td><span className="dsb-skeleton" style={{ width: "40px", height: "12px" }} /></td>
+              <td><span className="dsb-skeleton" style={{ width: "60px", height: "20px", borderRadius: "6px" }} /></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  }
+
   // Use API data if available, otherwise use mock data
   const safeStocks = Array.isArray(stocks)
     ? stocks
@@ -61,9 +88,11 @@ export default function RecommendedStocksTable({ stocks }) {
           return (
             <tr
               key={stock?.symbol || `stock-${index}`}
+              className="stock-table__row"
+              style={{ "--dsb-stagger": index }}
             >
               {/* Stock */}
-              <td>
+              <td data-label="Stock">
                 <p className="stock-table__symbol">
                   {stock?.symbol || "N/A"}
                 </p>
@@ -74,7 +103,7 @@ export default function RecommendedStocksTable({ stocks }) {
               </td>
 
               {/* Sector */}
-              <td>
+              <td data-label="Sector">
                 <span
                   className={`stock-table__badge stock-table__badge--${
                     SECTOR_COLORS[stock?.sector] || "gray"
@@ -85,7 +114,7 @@ export default function RecommendedStocksTable({ stocks }) {
               </td>
 
               {/* Weight */}
-              <td>
+              <td data-label="Weight">
                 <div className="stock-table__weight">
                   <span className="stock-table__weight-track">
                     <span
@@ -102,13 +131,14 @@ export default function RecommendedStocksTable({ stocks }) {
                 </div>
               </td>
 
-              {/* Expected Return */}
-              <td className="stock-table__return">
+              {/* Expected Return — positive expected return reads green,
+                  consistent with amounts elsewhere on the dashboard */}
+              <td className="stock-table__return dsb-amount--positive" data-label="Exp. Return">
                 +{expReturn}%
               </td>
 
               {/* Risk */}
-              <td>
+              <td data-label="Risk">
                 <span
                   className={`stock-table__badge stock-table__badge--${
                     RISK_COLORS[stock?.risk] || "gray"

@@ -24,6 +24,18 @@
   border-bottom: none;
 }
 
+.stock-table__row {
+  animation: dsb-rise-in var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--dsb-stagger, 0) * 50ms);
+  transition: background-color var(--dur-fast) ease;
+}
+
+.stock-table__row:hover { background: var(--bg); }
+
+.stock-table__weight-fill {
+  transition: width 500ms var(--ease-out);
+}
+
 .stock-table__symbol {
   font-family: var(--font-mono);
   font-size: 13px;
@@ -90,3 +102,37 @@
 .stock-table__badge--indigo { background: rgba(139, 92, 246, 0.12); color: #6d28d9; }
 .stock-table__badge--danger { background: rgba(248, 113, 113, 0.12); color: #b91c1c; }
 .stock-table__badge--gray { background: var(--line); color: var(--muted); }
+
+/* ---------- Responsive: collapse the table into stacked cards ---------- */
+@media (max-width: 640px) {
+  .stock-table thead { display: none; }
+
+  .stock-table, .stock-table tbody, .stock-table tr, .stock-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .stock-table__row {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+
+  .stock-table tbody td {
+    border-bottom: none;
+    padding: 6px 0;
+  }
+
+  .stock-table tbody td[data-label]:not(:first-child)::before {
+    content: attr(data-label);
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--muted-dim);
+    margin-bottom: 3px;
+  }
+
+  .stock-table__weight { min-width: 0; }
+}

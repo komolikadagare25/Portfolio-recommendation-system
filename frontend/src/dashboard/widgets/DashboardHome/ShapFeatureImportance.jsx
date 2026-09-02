@@ -3,12 +3,27 @@ import { shapFeatures as defaultFeatures } from "../../../data/dashboardMock";
 import "./ShapFeatureImportance.css";
 
 // SHAP contribution:
-// Positive = feature increases the risk score
-// Negative = feature decreases the risk score
+// Positive = feature increases the risk score  -> colored red (risky)
+// Negative = feature decreases the risk score  -> colored green (safe)
 
 export default function ShapFeatureImportance({
   features = defaultFeatures,
+  isLoading = false,
 }) {
+  if (isLoading) {
+    return (
+      <ul className="shap-list">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <li key={i} className="shap-list__row">
+            <span className="dsb-skeleton" style={{ width: "90px", height: "10px", justifySelf: "end" }} />
+            <span className="dsb-skeleton" style={{ width: "100%", height: "8px" }} />
+            <span className="dsb-skeleton" style={{ width: "36px", height: "10px" }} />
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
   // Make sure features is always a valid array
   const safeFeatures = Array.isArray(features) ? features : defaultFeatures;
 
@@ -41,6 +56,7 @@ export default function ShapFeatureImportance({
           <li
             key={f?.name || `feature-${index}`}
             className="shap-list__row"
+            style={{ "--dsb-stagger": index }}
           >
             <span className="shap-list__name">
               {f?.name || "Unknown Feature"}
@@ -53,7 +69,7 @@ export default function ShapFeatureImportance({
                     ? "shap-list__bar--pos"
                     : "shap-list__bar--neg"
                 }`}
-                style={{ width: `${widthPct}%` }}
+                style={{ "--dsb-bar-width": `${widthPct}%` }}
               />
             </span>
 

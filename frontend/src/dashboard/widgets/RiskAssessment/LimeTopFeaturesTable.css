@@ -43,6 +43,10 @@
 
 .lime-top-features__table thead th:last-child { text-align: right; }
 
+.lime-top-features__table tbody tr {
+  animation: dsb-fade-in var(--dur-base) var(--ease-out) both;
+}
+
 .lime-top-features__table tbody td {
   padding: 9px 8px 9px 0;
   border-bottom: 1px solid var(--line);

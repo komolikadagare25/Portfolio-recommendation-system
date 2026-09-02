@@ -9,6 +9,13 @@
   grid-template-columns: 170px 1fr;
   align-items: center;
   gap: 10px;
+  animation: dsb-fade-in var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--dsb-stagger, 0) * 50ms);
+}
+
+@media (max-width: 500px) {
+  .shap-chart__row { grid-template-columns: 96px 1fr; }
+  .shap-chart__label { font-size: 11px; }
 }
 
 .shap-chart__label {
@@ -53,10 +60,13 @@
 .shap-chart__bar {
   height: 12px;
   border-radius: 2px;
+  width: 0;
+  animation: dsb-bar-grow 550ms var(--ease-out) forwards;
+  animation-delay: calc(var(--dsb-stagger, 0) * 50ms + 100ms);
 }
 
-.shap-chart__bar--pos { background: #22c55e; }
-.shap-chart__bar--neg { background: #ef4444; }
+.shap-chart__bar--pos { background: var(--success); }
+.shap-chart__bar--neg { background: var(--danger); }
 
 .shap-chart__axis-label {
   text-align: center;

@@ -4,6 +4,11 @@
   border-radius: 14px;
   padding: 28px;
   max-width: 640px;
+  animation: dsb-rise-in var(--dur-base) var(--ease-out) both;
+}
+
+@media (max-width: 560px) {
+  .risk-form { padding: 20px; }
 }
 
 .risk-form__progress-track {
@@ -33,6 +38,11 @@
   font-weight: 600;
   color: var(--text);
   margin: 0 0 20px;
+  animation: dsb-fade-in var(--dur-base) var(--ease-out) both;
+}
+
+.risk-form__step-body {
+  animation: dsb-fade-in var(--dur-base) var(--ease-out) both;
 }
 
 .risk-form__number-input {
@@ -64,11 +74,12 @@
   border-radius: 8px;
   padding: 12px 14px;
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
 }
 
 .risk-form__option:hover {
   border-color: var(--indigo);
+  transform: translateX(2px);
 }
 
 .risk-form__option--selected {
@@ -96,7 +107,13 @@
   padding: 10px 18px;
   cursor: pointer;
   border: 1px solid var(--line);
+  transition: background-color var(--dur-fast) ease, transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
 }
+
+.risk-form__back-btn:hover:not(:disabled) { background: var(--bg); }
+.risk-form__next-btn:hover:not(:disabled) { background: #2f6fe0; box-shadow: 0 6px 16px var(--indigo-soft); }
+.risk-form__back-btn:active:not(:disabled),
+.risk-form__next-btn:active:not(:disabled) { transform: scale(0.97); }
 
 .risk-form__back-btn {
   background: var(--panel);
@@ -121,6 +138,65 @@
 }
 
 /* Loading / error states shown while the prediction API call is in flight */
+.risk-form__generating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 48px 24px;
+  text-align: center;
+  animation: dsb-fade-in var(--dur-base) var(--ease-out) both;
+}
+
+.risk-form__spinner {
+  width: 26px;
+  height: 26px;
+  border-width: 3px;
+  margin-bottom: 6px;
+}
+
+.risk-form__generating-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.risk-form__generating-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+  max-width: 380px;
+}
+
+.risk-form__generating-steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.risk-form__generating-step {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--indigo);
+  background: var(--indigo-soft);
+  border-radius: 20px;
+  padding: 5px 12px;
+  animation: dsb-pulse-dot 1.8s ease-in-out infinite;
+}
+
+.risk-form__generating-step:nth-child(2) { animation-delay: 0.3s; }
+.risk-form__generating-step:nth-child(3) { animation-delay: 0.6s; }
+
+.risk-form__error {
+  color: var(--danger);
+  font-size: 13.5px;
+  margin-bottom: 14px;
+}
+
 .risk-form__status {
   display: flex;
   flex-direction: column;
@@ -137,18 +213,8 @@
   text-align: center;
 }
 
-.risk-form__spinner {
-  color: var(--indigo);
-  animation: risk-form-spin 0.9s linear infinite;
-}
-
-@keyframes risk-form-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 .risk-form__status--error {
-  color: #b91c1c;
+  color: var(--danger);
 }
 
 .risk-form__status--error .risk-form__next-btn {

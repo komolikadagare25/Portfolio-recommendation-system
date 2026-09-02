@@ -128,12 +128,28 @@ export default function RiskAssessmentForm({ onSubmitAnswers, onComplete }) {
 
   if (isResultStep) {
     if (submitting) {
-      return <div className="risk-form"><p>Generating your report...</p></div>;
+      return (
+        <div className="risk-form">
+          <div className="risk-form__generating" aria-busy="true">
+            <span className="dsb-spinner risk-form__spinner" />
+            <h2 className="risk-form__generating-title">Generating your report</h2>
+            <p className="risk-form__generating-sub">
+              Running your answers through the risk model and building SHAP / LIME explanations
+              <span className="dsb-loading-dots"><span /><span /><span /></span>
+            </p>
+            <div className="risk-form__generating-steps">
+              <span className="risk-form__generating-step">Scoring risk profile</span>
+              <span className="risk-form__generating-step">Building portfolio</span>
+              <span className="risk-form__generating-step">Explaining the decision</span>
+            </div>
+          </div>
+        </div>
+      );
     }
     if (submitError) {
       return (
         <div className="risk-form">
-          <p style={{ color: "red" }}>{submitError}</p>
+          <p className="risk-form__error" role="alert">{submitError}</p>
           <button
             type="button"
             className="risk-form__next-btn"
@@ -172,7 +188,9 @@ export default function RiskAssessmentForm({ onSubmitAnswers, onComplete }) {
         Question {step + 1} of {totalQuestions}
       </p>
 
-      <h2 className="risk-form__question">{currentQuestion.question}</h2>
+      <h2 className="risk-form__question" key={step}>{currentQuestion.question}</h2>
+
+      <div className="risk-form__step-body" key={`body-${step}`}>
 
       {currentQuestion.type === "number" && (
         <input
@@ -225,6 +243,7 @@ export default function RiskAssessmentForm({ onSubmitAnswers, onComplete }) {
           ))}
         </div>
       )}
+      </div>
 
       <div className="risk-form__nav">
         <button type="button" className="risk-form__back-btn" onClick={handleBack} disabled={step === 0}>

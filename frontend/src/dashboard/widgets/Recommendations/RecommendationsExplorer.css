@@ -70,6 +70,8 @@
 
 .rec-explorer__row {
   border-top: 1px solid var(--line);
+  animation: dsb-rise-in var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--dsb-stagger, 0) * 40ms);
 }
 
 .rec-explorer__row-main {
@@ -84,10 +86,17 @@
   cursor: pointer;
   text-align: left;
   font-family: var(--font-ui);
+  transition: background-color var(--dur-fast) ease;
 }
+
+.rec-explorer__row-main:hover { background: var(--bg); }
 
 .rec-explorer__row--open .rec-explorer__row-main {
   background: var(--bg);
+}
+
+.rec-explorer__why {
+  animation: dsb-fade-in var(--dur-base) var(--ease-out) both;
 }
 
 .rec-explorer__stock {
@@ -127,6 +136,7 @@
   height: 100%;
   background: var(--indigo);
   border-radius: 4px;
+  transition: width 500ms var(--ease-out);
 }
 
 .rec-explorer__weight-value {
@@ -140,7 +150,7 @@
 .rec-explorer__return {
   font-family: var(--font-mono);
   font-size: 13px;
-  color: var(--teal);
+  color: var(--success-strong);
 }
 
 .rec-explorer__badge {

@@ -9,6 +9,12 @@ import "./PredictionResult.css";
  *   investorSummary: { age: number|string, objective: string, preferredAsset: string, duration: string }
  * } }} props
  */
+const RISK_TONE = {
+  Low: "prediction-result__stat-value--low",
+  Medium: "prediction-result__stat-value--medium",
+  High: "prediction-result__stat-value--high",
+};
+
 export default function PredictionResult({ prediction }) {
   const { riskLevel, confidence, investmentHorizon, riskDescription, investorSummary } = prediction;
 
@@ -22,7 +28,7 @@ export default function PredictionResult({ prediction }) {
       <div className="prediction-result__stats-row">
         <div className="prediction-result__stat">
           <p className="prediction-result__stat-label">Risk Level</p>
-          <p className="prediction-result__stat-value">{riskLevel}</p>
+          <p className={`prediction-result__stat-value ${RISK_TONE[riskLevel] || ""}`}>{riskLevel}</p>
         </div>
         <div className="prediction-result__stat">
           <p className="prediction-result__stat-label">Confidence</p>

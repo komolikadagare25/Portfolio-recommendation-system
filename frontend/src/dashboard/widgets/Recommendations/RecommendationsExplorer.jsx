@@ -112,10 +112,14 @@ export default function RecommendationsExplorer({ stocks }) {
           </div>
         )}
 
-        {filtered.map((s) => {
+        {filtered.map((s, i) => {
           const isOpen = expanded.has(s.symbol);
           return (
-            <div key={s.symbol} className={`rec-explorer__row ${isOpen ? "rec-explorer__row--open" : ""}`}>
+            <div
+              key={s.symbol}
+              className={`rec-explorer__row ${isOpen ? "rec-explorer__row--open" : ""}`}
+              style={{ "--dsb-stagger": i }}
+            >
               <button className="rec-explorer__row-main" onClick={() => toggleRow(s.symbol)}>
                 <span className="rec-explorer__stock">
                   <span className="rec-explorer__symbol">{s.symbol}</span>

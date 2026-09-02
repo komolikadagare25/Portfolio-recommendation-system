@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ClipboardList, ArrowRight } from "lucide-react";
+import { ClipboardList, ArrowRight, Wallet } from "lucide-react";
 import "./MyPortfolio.css";
 import HistoricalPerformanceChart from "../../dashboard/widgets/DashboardHome/HistoricalPerformanceChart";
 
@@ -45,7 +45,7 @@ export default function MyPortfolio() {
     loadLatestReport();
   }, [token]);
 
-    const handleBuildPlan = async () => {
+  const handleBuildPlan = async () => {
     setPlanError(null);
     setPlan(null);
 
@@ -77,8 +77,26 @@ export default function MyPortfolio() {
     }
   };
 
-  if (loading) return <div className="myPortfolio-page"><h1>My Portfolio</h1><p>Loading...</p></div>;
-  if (error) return <div className="myPortfolio-page"><h1>My Portfolio</h1><p style={{ color: "red" }}>{error}</p></div>;
+  if (loading) {
+    return (
+      <div className="myPortfolio-page">
+        <h1>My Portfolio</h1>
+        <div className="myPortfolio-panel">
+          <span className="dsb-skeleton" style={{ width: "180px", height: "16px", marginBottom: "12px" }} />
+          <span className="dsb-skeleton" style={{ width: "90%", height: "12px" }} />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="myPortfolio-page">
+        <h1>My Portfolio</h1>
+        <p className="myPortfolio-page__error">{error}</p>
+      </div>
+    );
+  }
 
   if (!report) {
     return (
@@ -113,94 +131,110 @@ export default function MyPortfolio() {
         (confidence: {(parseFloat(report.confidence) * 100).toFixed(1)}%)
       </p>
 
-      <h2>Asset Allocation</h2>
-      <ul>
-        {Object.entries(portfolio_result.asset_allocation).map(([k, v]) => (
-          <li key={k}>{k}: {v}%</li>
-        ))}
-      </ul>
+      <section className="myPortfolio-panel">
+        <h2 className="myPortfolio-panel__title">Asset Allocation</h2>
+        <ul className="myPortfolio-allocation-list">
+          {Object.entries(portfolio_result.asset_allocation).map(([k, v]) => (
+            <li key={k} className="myPortfolio-allocation-row">
+              <span>{k}</span>
+              <div className="myPortfolio-allocation-row__track">
+                <span className="myPortfolio-allocation-row__fill" style={{ width: `${v}%` }} />
+              </div>
+              <span className="myPortfolio-allocation-row__value">{v}%</span>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-      <h2>Recommended Sectors</h2>
-      <ul>
-        {portfolio_result.recommended_sectors.map((s) => (
-          <li key={s}>{s}</li>
-        ))}
-      </ul>
+      <section className="myPortfolio-panel">
+        <h2 className="myPortfolio-panel__title">Recommended Sectors</h2>
+        <ul className="myPortfolio-chip-list">
+          {portfolio_result.recommended_sectors.map((s) => (
+            <li key={s} className="myPortfolio-chip">{s}</li>
+          ))}
+        </ul>
 
-      <h2>Recommended Stocks</h2>
-      <ul>
-        {portfolio_result.recommended_stocks.map((s) => (
-          <li key={s}>{s}</li>
-        ))}
-      </ul>
+        <h2 className="myPortfolio-panel__title" style={{ marginTop: "22px" }}>Recommended Stocks</h2>
+        <ul className="myPortfolio-chip-list">
+          {portfolio_result.recommended_stocks.map((s) => (
+            <li key={s} className="myPortfolio-chip myPortfolio-chip--alt">{s}</li>
+          ))}
+        </ul>
 
-      <p><em>{portfolio_result.investment_advice}</em></p>
+        <p className="myPortfolio-advice">{portfolio_result.investment_advice}</p>
+      </section>
 
-      <h2>Historical Performance</h2>
-      <h2>Historical Performance</h2>
-      <HistoricalPerformanceChart reportId={report.id} amount={plan ? plan.total_amount : 10000} riskLevel={report.risk_level}/>
+      <section className="myPortfolio-panel">
+        <h2 className="myPortfolio-panel__title">Historical Performance</h2>
+        <HistoricalPerformanceChart reportId={report.id} amount={plan ? plan.total_amount : 10000} riskLevel={report.risk_level} />
+      </section>
 
-      <h2>Build Your Portfolio</h2>
-      <p>Enter an amount to see exactly how many shares of each recommended stock you could buy today, at live market prices.</p>
+      <section className="myPortfolio-panel">
+        <h2 className="myPortfolio-panel__title">Build Your Portfolio</h2>
+        <p className="myPortfolio-panel__subtext">
+          Enter an amount to see exactly how many shares of each recommended stock you could buy today, at live market prices.
+        </p>
 
-      <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
-        <input
-          type="number"
-          placeholder="e.g. 100000"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          style={{ padding: "8px", border: "1px solid #ccc", borderRadius: "6px", width: "200px" }}
-        />
-        <button
-          onClick={handleBuildPlan}
-          disabled={planLoading}
-          style={{ padding: "8px 16px", borderRadius: "6px", border: "none", background: "#3b82f6", color: "#fff", cursor: "pointer" }}
-        >
-          {planLoading ? "Fetching live prices..." : "Build Plan"}
-        </button>
-      </div>
-
-      {planError && <p style={{ color: "red" }}>{planError}</p>}
-
-      {plan && (
-        <div style={{ border: "1px solid #ddd", borderRadius: "8px", padding: "16px" }}>
-                    <h3>Category Breakdown</h3>
-          <ul style={{ listStyle: "none", padding: 0 }}>
-            {plan.category_breakdown.map((c) => (
-              <li key={c.category} style={{ marginBottom: "10px" }}>
-                <strong>{c.category}: ₹{c.amount.toLocaleString()}</strong>
-                {c.guidance && (
-                  <p style={{ margin: "2px 0 0", fontSize: "0.85em", color: "#666" }}>{c.guidance}</p>
-                )}
-              </li>
-            ))}
-          </ul>
-
-          <h3>Stock Purchase Plan</h3>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ textAlign: "left", borderBottom: "1px solid #ddd" }}>
-                <th style={{ padding: "6px" }}>Stock</th>
-                <th style={{ padding: "6px" }}>Price</th>
-                <th style={{ padding: "6px" }}>Shares</th>
-                <th style={{ padding: "6px" }}>Invested</th>
-                <th style={{ padding: "6px" }}>Leftover</th>
-              </tr>
-            </thead>
-            <tbody>
-              {plan.stock_plan.map((s) => (
-                <tr key={s.stock} style={{ borderBottom: "1px solid #f0f0f0" }}>
-                  <td style={{ padding: "6px" }}>{s.stock}</td>
-                  <td style={{ padding: "6px" }}>{s.price ? `₹${s.price}` : "—"}</td>
-                  <td style={{ padding: "6px" }}>{s.shares ?? "—"}</td>
-                  <td style={{ padding: "6px" }}>{s.invested_amount ? `₹${s.invested_amount.toLocaleString()}` : "—"}</td>
-                  <td style={{ padding: "6px" }}>{s.leftover ? `₹${s.leftover.toLocaleString()}` : "—"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="myPortfolio-plan-form">
+          <div className="myPortfolio-plan-form__input-wrap">
+            <Wallet size={15} strokeWidth={1.9} className="myPortfolio-plan-form__icon" />
+            <input
+              type="number"
+              placeholder="e.g. 100000"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="myPortfolio-plan-form__input"
+            />
+          </div>
+          <button
+            onClick={handleBuildPlan}
+            disabled={planLoading}
+            className="myPortfolio-plan-form__btn"
+          >
+            {planLoading ? "Fetching live prices…" : "Build Plan"}
+          </button>
         </div>
-      )}
+
+        {planError && <p className="myPortfolio-page__error">{planError}</p>}
+
+        {plan && (
+          <div className="myPortfolio-plan-result">
+            <h3 className="myPortfolio-panel__title">Category Breakdown</h3>
+            <ul className="myPortfolio-breakdown-list">
+              {plan.category_breakdown.map((c) => (
+                <li key={c.category} className="myPortfolio-breakdown-row">
+                  <strong>{c.category}: ₹{c.amount.toLocaleString("en-IN")}</strong>
+                  {c.guidance && <p>{c.guidance}</p>}
+                </li>
+              ))}
+            </ul>
+
+            <h3 className="myPortfolio-panel__title" style={{ marginTop: "20px" }}>Stock Purchase Plan</h3>
+            <table className="myPortfolio-plan-table">
+              <thead>
+                <tr>
+                  <th>Stock</th>
+                  <th>Price</th>
+                  <th>Shares</th>
+                  <th>Invested</th>
+                  <th>Leftover</th>
+                </tr>
+              </thead>
+              <tbody>
+                {plan.stock_plan.map((s) => (
+                  <tr key={s.stock}>
+                    <td>{s.stock}</td>
+                    <td>{s.price ? `₹${s.price}` : "—"}</td>
+                    <td>{s.shares ?? "—"}</td>
+                    <td>{s.invested_amount ? `₹${s.invested_amount.toLocaleString("en-IN")}` : "—"}</td>
+                    <td>{s.leftover ? `₹${s.leftover.toLocaleString("en-IN")}` : "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
     </div>
   );
 }

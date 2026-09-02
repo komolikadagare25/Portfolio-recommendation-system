@@ -2,6 +2,7 @@
   border: 1px solid var(--line);
   border-radius: 10px;
   overflow: hidden;
+  transition: box-shadow var(--dur-fast) ease;
 }
 
 .collapsible-section__header {
@@ -17,6 +18,13 @@
   color: var(--text);
   cursor: pointer;
   text-align: left;
+  transition: background-color var(--dur-fast) ease;
+}
+
+.collapsible-section__header:hover { background: var(--line); }
+
+.collapsible-section__body--open {
+  animation: dsb-fade-in var(--dur-base) var(--ease-out) both;
 }
 
 .collapsible-section__chevron {

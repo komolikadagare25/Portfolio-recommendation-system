@@ -1,3 +1,233 @@
 .history-page {
-  /* page-specific styles go here */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.history-page h1 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.history-page__error {
+  color: var(--danger);
+  font-size: 13.5px;
+}
+
+.history-page__empty {
+  max-width: 420px;
+  margin: 20px auto 0;
+  padding: 36px 28px;
+  text-align: center;
+  background: var(--panel);
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+}
+
+.history-page__empty-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--indigo-soft);
+  color: var(--indigo);
+}
+
+.history-page__empty h2 {
+  font-size: 15.5px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.history-page__empty p {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.history-page__layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .history-page__layout { grid-template-columns: 1fr; }
+}
+
+/* ---------- List (master) ---------- */
+.history-page__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-page__list-item {
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+
+.history-page__list-item:hover { border-color: #d7dbe2; }
+
+.history-page__list-item--active {
+  background: var(--indigo-soft);
+  border-color: var(--indigo);
+}
+
+.history-page__list-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.history-page__list-item-band {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.history-page__list-item-date {
+  font-size: 11.5px;
+  color: var(--muted-dim);
+}
+
+/* ---------- Detail (panel) ---------- */
+.history-page__panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+  min-height: 200px;
+  animation: dsb-fade-in var(--dur-base) var(--ease-out) both;
+}
+
+.history-page__detail-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.history-page__detail-head h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.history-page__description {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+.history-page__section-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted-dim);
+  margin: 20px 0 10px;
+}
+.history-page__section-title:first-of-type { margin-top: 4px; }
+
+.history-page__badge {
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.history-page__badge--teal { background: var(--teal-soft); color: var(--teal); }
+.history-page__badge--amber { background: rgba(245, 158, 11, 0.12); color: #b45309; }
+.history-page__badge--danger { background: rgba(248, 113, 113, 0.12); color: #b91c1c; }
+.history-page__badge--gray { background: var(--line); color: var(--muted); }
+
+/* Allocation bars, reused visual language from MyPortfolio */
+.history-page__allocation-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-page__allocation-row {
+  display: grid;
+  grid-template-columns: 130px 1fr 40px;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+}
+
+.history-page__allocation-track {
+  height: 7px;
+  background: var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.history-page__allocation-fill {
+  display: block;
+  height: 100%;
+  background: var(--indigo);
+  border-radius: 6px;
+}
+
+.history-page__allocation-value {
+  font-family: var(--font-mono);
+  text-align: right;
+  color: var(--muted);
+}
+
+.history-page__chip-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.history-page__chip {
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--indigo-soft);
+  color: var(--indigo);
+  padding: 4px 11px;
+  border-radius: 20px;
+}
+
+.history-page__chip--alt {
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.history-page__advice {
+  font-style: italic;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg);
+  border-left: 3px solid var(--indigo);
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  margin: 22px 0 0;
 }

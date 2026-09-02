@@ -48,7 +48,7 @@ export default function RiskResultTabs({ onContinue, prediction, portfolio, shap
         ))}
       </div>
 
-      <div className="risk-result-tabs__content">
+      <div className="risk-result-tabs__content" key={activeTab}>
         {activeTab === "Prediction & Portfolio" && (
           <div className="risk-result-tabs__stack">
             <PredictionResult prediction={predictionData} />

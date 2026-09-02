@@ -9,7 +9,36 @@
   flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 20px;
+  animation: dsb-rise-in var(--dur-slow) var(--ease-out) both;
+  transition: background 300ms ease;
 }
+
+.risk-banner--loading { background: var(--panel); border: 1px solid var(--line); }
+
+/* The banner always stays on-brand navy/blue — the risk band itself is
+   still communicated clearly through the badge text and value, it just
+   no longer repaints the whole card red/amber/green. Keeping one calm,
+   consistent blue here (matching the rest of the --indigo brand color)
+   is what "the blue theme" refers to across the app. */
+.risk-banner--low,
+.risk-banner--medium,
+.risk-banner--high {
+  background: linear-gradient(135deg, #14213d 0%, #1e3a6f 100%);
+}
+
+/* Small band-colored accent on the badge dot only — enough to read at a
+   glance without turning the whole banner a traffic-light color. */
+.risk-banner__badge-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 7px;
+  vertical-align: middle;
+}
+.risk-banner--low .risk-banner__badge-dot { background: #4ade80; }
+.risk-banner--medium .risk-banner__badge-dot { background: #fbbf24; }
+.risk-banner--high .risk-banner__badge-dot { background: #f87171; }
 
 .risk-banner__badge {
   display: inline-block;
@@ -49,4 +78,10 @@
   font-size: 12px;
   color: #a7b4cc;
   margin: 4px 0 0;
+}
+
+@media (max-width: 560px) {
+  .risk-banner { padding: 22px 20px; }
+  .risk-banner__band { font-size: 24px; }
+  .risk-banner__confidence { text-align: left; }
 }

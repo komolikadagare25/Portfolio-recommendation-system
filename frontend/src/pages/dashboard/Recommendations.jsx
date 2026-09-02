@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import ShapPlainExplanation from "../../dashboard/widgets/RiskAssessment/ShapPlainExplanation";
 import LimePlainExplanation from "../../dashboard/widgets/RiskAssessment/LimePlainExplanation";
-import "./Recommendations.css";
 import BeginnerGuide from "../../dashboard/widgets/RiskAssessment/BeginnerGuide";
 import InvestmentReasoning from "../../dashboard/widgets/RiskAssessment/InvestmentReasoning";
+import CollapsibleSection from "../../dashboard/widgets/RiskAssessment/CollapsibleSection";
+import "./Recommendations.css";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
@@ -42,8 +43,27 @@ export default function Recommendations() {
     loadLatestReport();
   }, [token]);
 
-  if (loading) return <div className="recommendations-page"><h1>Recommendations</h1><p>Loading...</p></div>;
-  if (error) return <div className="recommendations-page"><h1>Recommendations</h1><p style={{ color: "red" }}>{error}</p></div>;
+  if (loading) {
+    return (
+      <div className="recommendations-page">
+        <h1>Recommendations</h1>
+        <div className="recommendations-page__panel">
+          <span className="dsb-skeleton" style={{ width: "220px", height: "16px", marginBottom: "12px" }} />
+          <span className="dsb-skeleton" style={{ width: "90%", height: "12px", marginBottom: "8px" }} />
+          <span className="dsb-skeleton" style={{ width: "70%", height: "12px" }} />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="recommendations-page">
+        <h1>Recommendations</h1>
+        <p className="recommendations-page__error">{error}</p>
+      </div>
+    );
+  }
 
   if (!report) {
     return (
@@ -70,54 +90,72 @@ export default function Recommendations() {
   const limeTopPositive = limeFeatures.filter((f) => f.weight >= 0).sort((a, b) => b.weight - a.weight);
   const limeTopNegative = limeFeatures.filter((f) => f.weight < 0).sort((a, b) => a.weight - b.weight);
 
+  const explanation = portfolio_result.personalization_explanation;
+
   return (
     <div className="recommendations-page">
-      <h1>Recommendations</h1>
-      <p>
-        Based on your <strong>{risk_level}</strong> risk profile
-        (confidence: {(parseFloat(report.confidence) * 100).toFixed(1)}%)
-      </p>
+      <div className="recommendations-page__header">
+        <h1>Recommendations</h1>
+        <p className="recommendations-page__subtitle">
+          Based on your <strong>{risk_level}</strong> risk profile
+          <span className="recommendations-page__confidence-pill">
+            confidence {(parseFloat(report.confidence) * 100).toFixed(1)}%
+          </span>
+        </p>
+      </div>
 
+      <section className="recommendations-page__panel">
         <InvestmentReasoning reportId={report.id} />
 
-      <p style={{ marginTop: "16px" }}><em>{portfolio_result.investment_advice}</em></p>
+        <p className="recommendations-page__advice">{portfolio_result.investment_advice}</p>
 
-      <details style={{ marginTop: "16px" }}>
-        <summary style={{ cursor: "pointer", color: "#666" }}>
-          Show the plain sector/stock lists
-        </summary>
-        <h3>Sectors</h3>
-        <ul>{portfolio_result.recommended_sectors.map((s) => <li key={s}>{s}</li>)}</ul>
-        <h3>Stocks</h3>
-        <ul>{portfolio_result.recommended_stocks.map((s) => <li key={s}>{s}</li>)}</ul>
-      </details>
+        <CollapsibleSection title="Show the plain sector/stock lists" defaultOpen={false}>
+          <div className="recommendations-page__plain-lists">
+            <div>
+              <h3>Sectors</h3>
+              <ul className="recommendations-page__chip-list">
+                {portfolio_result.recommended_sectors.map((s) => (
+                  <li key={s} className="recommendations-page__chip">{s}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3>Stocks</h3>
+              <ul className="recommendations-page__chip-list">
+                {portfolio_result.recommended_stocks.map((s) => (
+                  <li key={s} className="recommendations-page__chip">{s}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </CollapsibleSection>
+      </section>
 
-      
+      {explanation && (
+        <section className="recommendations-page__panel">
+          <h2 className="recommendations-page__panel-title">Why your allocation looks like this</h2>
+          <p className="recommendations-page__panel-subtext">{explanation.summary}</p>
 
-      {portfolio_result.personalization_explanation && (
-        <>
-          <h2>Why your allocation looks like this</h2>
-          <p>{portfolio_result.personalization_explanation.summary}</p>
-
-          <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "16px" }}>
+          <table className="recommendations-page__table">
             <thead>
-              <tr style={{ textAlign: "left", borderBottom: "1px solid #ddd" }}>
-                <th style={{ padding: "6px" }}>Category</th>
-                <th style={{ padding: "6px" }}>Standard Template</th>
-                <th style={{ padding: "6px" }}>Your Allocation</th>
-                <th style={{ padding: "6px" }}>Change</th>
+              <tr>
+                <th>Category</th>
+                <th>Standard Template</th>
+                <th>Your Allocation</th>
+                <th>Change</th>
               </tr>
             </thead>
             <tbody>
-              {Object.entries(portfolio_result.personalization_explanation.final_allocation).map(([category, finalVal]) => {
-                const baseVal = portfolio_result.personalization_explanation.base_allocation[category];
+              {Object.entries(explanation.final_allocation).map(([category, finalVal]) => {
+                const baseVal = explanation.base_allocation[category];
                 const delta = finalVal - baseVal;
+                const deltaClass = delta > 0 ? "dsb-amount--positive" : delta < 0 ? "dsb-amount--negative" : "";
                 return (
-                  <tr key={category} style={{ borderBottom: "1px solid #f0f0f0" }}>
-                    <td style={{ padding: "6px" }}>{category}</td>
-                    <td style={{ padding: "6px" }}>{baseVal}%</td>
-                    <td style={{ padding: "6px" }}>{finalVal}%</td>
-                    <td style={{ padding: "6px", color: delta > 0 ? "green" : delta < 0 ? "red" : "#666" }}>
+                  <tr key={category}>
+                    <td>{category}</td>
+                    <td className="recommendations-page__num">{baseVal}%</td>
+                    <td className="recommendations-page__num">{finalVal}%</td>
+                    <td className={`recommendations-page__num ${deltaClass}`}>
                       {delta > 0 ? "+" : ""}{delta}pts
                     </td>
                   </tr>
@@ -125,28 +163,30 @@ export default function Recommendations() {
               })}
             </tbody>
           </table>
-        </>
+        </section>
       )}
 
-        <details style={{ marginTop: "24px" }}>
-        <summary style={{ cursor: "pointer", fontWeight: 600, fontSize: "1.1em" }}>
-          Want the technical detail behind your risk classification?
-        </summary>
-        <p style={{ color: "#666", fontSize: "0.9em" }}>
-          This explains how the AI arrived at your {risk_level} risk category —
-          a separate, earlier step from the sector/stock reasoning above.
-        </p>
-      <ShapPlainExplanation
-        predictedBand={risk_level}
-        topPositive={shapTopPositive}
-        topNegative={shapTopNegative}
-      />
-      <LimePlainExplanation
-        predictedBand={risk_level}
-        topPositive={limeTopPositive}
-        topNegative={limeTopNegative}
-      />
-      </details>
+      <section className="recommendations-page__panel">
+        <CollapsibleSection title="Want the technical detail behind your risk classification?" defaultOpen={false}>
+          <p className="recommendations-page__panel-subtext" style={{ marginBottom: "18px" }}>
+            This explains how the AI arrived at your {risk_level} risk category —
+            a separate, earlier step from the sector/stock reasoning above.
+          </p>
+          <div className="recommendations-page__explanations">
+            <ShapPlainExplanation
+              predictedBand={risk_level}
+              topPositive={shapTopPositive}
+              topNegative={shapTopNegative}
+            />
+            <LimePlainExplanation
+              predictedBand={risk_level}
+              topPositive={limeTopPositive}
+              topNegative={limeTopNegative}
+            />
+          </div>
+        </CollapsibleSection>
+      </section>
+
       <BeginnerGuide />
     </div>
   );

@@ -21,12 +21,25 @@
   cursor: pointer;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
+  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+  white-space: nowrap;
 }
+
+.risk-result-tabs__tab:hover { color: var(--text); }
 
 .risk-result-tabs__tab--active {
   color: var(--indigo);
   border-bottom-color: var(--indigo);
   font-weight: 600;
+}
+
+.risk-result-tabs__content {
+  animation: dsb-fade-in var(--dur-base) var(--ease-out) both;
+}
+
+@media (max-width: 700px) {
+  .risk-result-tabs__nav { gap: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .risk-result-tabs__tab { padding: 10px 12px; font-size: 12.5px; }
 }
 
 .risk-result-tabs__stack {
@@ -67,4 +80,20 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  transition: background-color var(--dur-fast) ease, transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
+}
+
+.risk-result-tabs__continue-btn:hover {
+  background: #2f6fe0;
+  box-shadow: 0 6px 16px var(--indigo-soft);
+}
+
+.risk-result-tabs__continue-btn:active { transform: scale(0.98); }
+
+.risk-result-tabs__continue-btn svg {
+  transition: transform var(--dur-fast) ease;
+}
+
+.risk-result-tabs__continue-btn:hover svg {
+  transform: translateX(3px);
 }

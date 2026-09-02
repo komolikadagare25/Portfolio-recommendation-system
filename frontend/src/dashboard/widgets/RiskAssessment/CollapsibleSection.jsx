@@ -10,7 +10,11 @@ export default function CollapsibleSection({ icon, title, defaultOpen = true, ch
 
   return (
     <div className="collapsible-section">
-      <button className="collapsible-section__header" onClick={() => setOpen((o) => !o)}>
+      <button
+        className="collapsible-section__header"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+      >
         <ChevronRight
           size={15}
           strokeWidth={2}
@@ -20,7 +24,7 @@ export default function CollapsibleSection({ icon, title, defaultOpen = true, ch
         {icon && <span className="collapsible-section__icon">{icon}</span>}
         <span className="collapsible-section__title">{title}</span>
       </button>
-      {open && <div className="collapsible-section__body">{children}</div>}
+      {open && <div className="collapsible-section__body collapsible-section__body--open">{children}</div>}
     </div>
   );
 }

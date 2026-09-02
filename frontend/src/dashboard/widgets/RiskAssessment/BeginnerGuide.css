@@ -1,0 +1,61 @@
+.beginner-guide__disclaimer {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 0 0 16px;
+}
+
+.beginner-guide__subheading {
+  font-size: 13.5px;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.beginner-guide__steps {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.beginner-guide__step {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.beginner-guide__step strong {
+  display: block;
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.beginner-guide__step p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.beginner-guide__glossary {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.beginner-guide__glossary-row dt {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.beginner-guide__glossary-row dd {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.6;
+}

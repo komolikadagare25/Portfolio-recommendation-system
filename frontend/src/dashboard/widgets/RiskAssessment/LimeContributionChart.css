@@ -9,6 +9,13 @@
   grid-template-columns: 170px 1fr;
   align-items: center;
   gap: 10px;
+  animation: dsb-fade-in var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--dsb-stagger, 0) * 50ms);
+}
+
+@media (max-width: 500px) {
+  .lime-chart__row { grid-template-columns: 96px 1fr; }
+  .lime-chart__label { font-size: 11px; }
 }
 
 .lime-chart__label {
@@ -53,10 +60,13 @@
 .lime-chart__bar {
   height: 12px;
   border-radius: 2px;
+  width: 0;
+  animation: dsb-bar-grow 550ms var(--ease-out) forwards;
+  animation-delay: calc(var(--dsb-stagger, 0) * 50ms + 100ms);
 }
 
 .lime-chart__bar--pos { background: var(--indigo); }
-.lime-chart__bar--neg { background: #f59e0b; }
+.lime-chart__bar--neg { background: var(--warning); }
 
 .lime-chart__axis-label {
   text-align: center;

@@ -49,6 +49,7 @@
 }
 
 .dsb-sidebar__link {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -58,14 +59,39 @@
   font-weight: 500;
   color: var(--muted);
   text-decoration: none;
+  border: none;
+  background: transparent;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) ease, color var(--dur-fast) ease, transform var(--dur-fast) ease;
+  animation: dsb-rise-in var(--dur-base) var(--ease-out) both;
+  animation-delay: calc(var(--dsb-stagger, 0) * 35ms);
 }
 
-.dsb-sidebar__link:hover { background: var(--panel); color: var(--text); }
+.dsb-sidebar__link svg { transition: transform var(--dur-fast) ease; }
+
+.dsb-sidebar__link:hover { background: var(--panel); color: var(--text); transform: translateX(2px); }
+.dsb-sidebar__link:hover svg { transform: scale(1.08); }
+.dsb-sidebar__link:active { transform: translateX(2px) scale(0.98); }
 
 .dsb-sidebar__link--active {
   background: var(--indigo-soft);
   color: var(--indigo);
 }
+
+.dsb-sidebar__link--active::before {
+  content: "";
+  position: absolute;
+  left: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  border-radius: 0 3px 3px 0;
+  background: var(--indigo);
+}
+
+.dsb-sidebar__logout:hover { background: var(--danger-soft); color: var(--danger); }
 
 .dsb-sidebar__user {
   display: flex;

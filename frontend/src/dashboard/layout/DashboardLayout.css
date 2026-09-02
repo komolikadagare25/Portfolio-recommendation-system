@@ -12,6 +12,23 @@
   --font-ui: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
+  /* Semantic risk/amount colors — reused everywhere an amount, verdict,
+     or risk badge needs to read as "safe" vs "risky" at a glance. */
+  --success: #16a34a;
+  --success-soft: rgba(22, 163, 74, 0.12);
+  --success-strong: #15803d;
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.1);
+  --danger-strong: #b91c1c;
+  --warning: #d97706;
+  --warning-soft: rgba(217, 119, 6, 0.12);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;
+  --dur-base: 260ms;
+  --dur-slow: 420ms;
+
   display: grid;
   grid-template-columns: 240px minmax(0, 1fr);
 
@@ -26,9 +43,75 @@
 
 .dsb-shell *, .dsb-shell *::before, .dsb-shell *::after { box-sizing: border-box; }
 
-@media (max-width: 800px) {
+/* Respect users who've asked for less motion */
+@media (prefers-reduced-motion: reduce) {
+  .dsb-shell *, .dsb-shell *::before, .dsb-shell *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Tidy, low-profile scrollbars for the scrolling panes */
+.dsb-main__content, .dsb-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.dsb-main__content::-webkit-scrollbar { width: 8px; }
+.dsb-main__content::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+.dsb-main__content::-webkit-scrollbar-track { background: transparent; }
+
+.dsb-shell a:focus-visible,
+.dsb-shell button:focus-visible,
+.dsb-shell select:focus-visible,
+.dsb-shell input:focus-visible {
+  outline: 2px solid var(--indigo);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- Mobile drawer sidebar ---------- */
+.dsb-sidebar__scrim {
+  display: none;
+}
+
+@media (max-width: 900px) {
   .dsb-shell { grid-template-columns: 1fr; }
-  .dsb-sidebar { display: none; } /* swap for a mobile drawer later */
+
+  .dsb-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 40;
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform var(--dur-base) var(--ease-out);
+    box-shadow: 8px 0 24px rgba(15, 23, 42, 0.12);
+  }
+
+  .dsb-shell--nav-open .dsb-sidebar {
+    transform: translateX(0);
+  }
+
+  .dsb-sidebar__scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 35;
+    background: rgba(15, 23, 42, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+
+  .dsb-shell--nav-open .dsb-sidebar__scrim {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .dsb-main__content { padding: 16px; }
 }
 
 .dsb-main {
@@ -58,10 +141,87 @@
   color: var(--muted);
 }
 
-
-
-/* stats */
-dashboard-charts{
-  display:flex;
-  
+/* Fade + rise in whenever a route's content mounts, so navigating between
+   Dashboard / History / Settings / Help never feels like a hard jump-cut. */
+.dsb-page-transition {
+  animation: dsb-page-in var(--dur-slow) var(--ease-out) both;
 }
+
+@keyframes dsb-page-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dsb-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes dsb-rise-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dsb-scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes dsb-shimmer {
+  from { background-position: -320px 0; }
+  to   { background-position: 320px 0; }
+}
+
+@keyframes dsb-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes dsb-pulse-dot {
+  0%, 100% { opacity: 0.35; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* ---------- Reusable "loading" building blocks ---------- */
+.dsb-skeleton {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--line) 25%, #f0f1f3 37%, var(--line) 63%);
+  background-size: 400px 100%;
+  animation: dsb-shimmer 1.4s ease-in-out infinite;
+}
+
+.dsb-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  border-top-color: var(--indigo);
+  animation: dsb-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+.dsb-loading-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.dsb-loading-row .dsb-loading-dots span {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  margin-left: 2px;
+  border-radius: 50%;
+  background: var(--muted-dim);
+  animation: dsb-pulse-dot 1.2s ease-in-out infinite;
+}
+.dsb-loading-row .dsb-loading-dots span:nth-child(2) { animation-delay: 0.15s; }
+.dsb-loading-row .dsb-loading-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+/* Amount / value color helpers — green for gains or "safe", red for
+   losses or "risky", used consistently across cards, tables and charts. */
+.dsb-amount--positive, .dsb-text-success { color: var(--success); }
+.dsb-amount--negative, .dsb-text-danger { color: var(--danger); }
+.dsb-amount--warning, .dsb-text-warning { color: var(--warning); }
